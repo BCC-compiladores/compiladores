@@ -13,10 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 
 import utils.Messages;
 
@@ -64,17 +61,29 @@ public class TelaController implements Initializable {
 	}
 	@FXML
 	public void btnCopyOnClick() {
-		
+        copyTextToClipboard();
 	}
 	@FXML
 	public void btnPasteOnClick() {
-		
+	    txtArea.appendText(Clipboard.getSystemClipboard().getString());
 	}
+
 	@FXML
 	public void btnCutOnClick() {
-		
+        copyTextToClipboard();
+        txtArea.clear();
 	}
-	@FXML
+
+    /**
+     * Copies the content of {@code txtArea} to the clipboard
+     */
+    private void copyTextToClipboard() {
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(txtArea.getText());
+        Clipboard.getSystemClipboard().setContent(content);
+    }
+
+    @FXML
 	public void btnCompileOnClick(ActionEvent e) {
 		txtStatusBar.setText(Messages.NOT_YET_IMPLEMENTED.get());
 	}
@@ -111,35 +120,51 @@ public class TelaController implements Initializable {
 	}
 
 	public void bindKeys() {
-		
-		//TODO: Bind other keys 
-		
-		
+
 		//Bind directly into the button when there is a key combination
-		btnAbout.getScene().getAccelerators().put(
-				  new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN), 
-				  new Runnable() {
-				    @Override public void run() {
-				      btnAbout.fire();
-				    }
-				  }
+
+		btnNew.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN),
+				() -> btnNew.fire()
 		);
 
+		btnOpen.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN),
+				() -> btnOpen.fire()
+		);
+
+		btnSave.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
+				() -> btnSave.fire()
+		);
+
+		btnCopy.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
+				() -> btnCopy.fire()
+		);
+
+		btnPaste.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
+				() -> btnPaste.fire()
+		);
+
+		btnCut.getScene().getAccelerators().put(
+				new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN),
+				() -> btnCut.fire()
+		);
+
+
 		//Bind into scene when the event is a single key press
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-		    public void handle(KeyEvent ke) {
-		        if (ke.getCode() == KeyCode.F1) {
-		            btnAbout.fire();
-		        }
-		    }
-		});
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
+            if (ke.getCode() == KeyCode.F1) {
+                btnAbout.fire();
+            }
+        });
 		
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-		    public void handle(KeyEvent ke) {
-		        if (ke.getCode() == KeyCode.F9) {
-		            btnCompile.fire();
-		        }
-		    }
-		});
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
+            if (ke.getCode() == KeyCode.F9) {
+                btnCompile.fire();
+            }
+        });
 	}
 }
