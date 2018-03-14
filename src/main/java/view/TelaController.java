@@ -11,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 
@@ -42,11 +41,6 @@ public class TelaController implements Initializable {
 		styleButtons();
 	}
 
-	
-	public ImageView getImageFromResources(String imgName){
-		return new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("imagens/" + imgName + ".png")));
-	}
-	
 	@FXML
 	public void btnNewOnClick() {
 		
@@ -94,6 +88,7 @@ public class TelaController implements Initializable {
 	}
 	
 	private void styleButtons() {
+
 		btnNew.setContentDisplay(ContentDisplay.TOP);
 		btnNew.setGraphic(getImageFromResources("new"));
 		
@@ -120,51 +115,32 @@ public class TelaController implements Initializable {
 	}
 
 	public void bindKeys() {
+		setKeyCombinationListener(btnNew, KeyCode.N);
+		setKeyCombinationListener(btnOpen, KeyCode.O);
+		setKeyCombinationListener(btnSave, KeyCode.S);
+		setKeyCombinationListener(btnCopy, KeyCode.C);
+		setKeyCombinationListener(btnPaste, KeyCode.V);
+		setKeyCombinationListener(btnCut, KeyCode.X);
 
-		//Bind directly into the button when there is a key combination
-
-		btnNew.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN),
-				() -> btnNew.fire()
-		);
-
-		btnOpen.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN),
-				() -> btnOpen.fire()
-		);
-
-		btnSave.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
-				() -> btnSave.fire()
-		);
-
-		btnCopy.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
-				() -> btnCopy.fire()
-		);
-
-		btnPaste.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
-				() -> btnPaste.fire()
-		);
-
-		btnCut.getScene().getAccelerators().put(
-				new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN),
-				() -> btnCut.fire()
-		);
-
-
-		//Bind into scene when the event is a single key press
+		setKeyListener(btnAbout, KeyCode.F1);
+		setKeyListener(btnCompile, KeyCode.F9);
+	}
+	
+	//Bind into scene when the event is a single key press
+	private void setKeyListener(Button b, KeyCode k) {
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
-            if (ke.getCode() == KeyCode.F1) {
-                btnAbout.fire();
-            }
-        });
-		
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
-            if (ke.getCode() == KeyCode.F9) {
-                btnCompile.fire();
-            }
-        });
+			if (ke.getCode() == k) {
+				b.fire();
+			}
+		});
+	}
+
+	private void setKeyCombinationListener(Button btn, KeyCode key) {
+		btn.getScene().getAccelerators().put(new KeyCodeCombination(key, KeyCombination.CONTROL_DOWN),
+				() -> btn.fire());
+	}
+
+	private ImageView getImageFromResources(String imgName){
+		return new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("imagens/" + imgName + ".png")));
 	}
 }
