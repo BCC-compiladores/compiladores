@@ -1,7 +1,9 @@
 package view;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -9,13 +11,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import utils.FileUtils;
 import utils.Messages;
 
 @SuppressWarnings("restriction")
@@ -31,9 +35,11 @@ public class TelaController implements Initializable {
 	@FXML private Button btnAbout;
 	@FXML private TextArea txtArea;
 	@FXML private TextArea txtStatusBar;
+	@FXML private Label lblBarraStatus;
 	
 	private Scene scene;
 	private Stage stage;
+	private File currentFile;
 
 	public void setScene(Scene scene) {
 		this.scene = scene;
@@ -50,15 +56,26 @@ public class TelaController implements Initializable {
 
 	@FXML
 	public void btnNewOnClick() {
-		
+		txtArea.clear();
+		txtStatusBar.clear();
+		lblBarraStatus.setText("");
 	}
+
 	@FXML
-	public void btnOpenOnClick() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open Resource File");
-		File selectedFile = fileChooser.showOpenDialog(stage);
-		//TODO: Save this file to current file being edited
+	public void btnOpenOnClick() throws IOException {
+
+		File selectedFile = FileUtils.getFileChooser().showOpenDialog(stage);
+
+		if(Objects.isNull(selectedFile)){
+			return;
+		}
+
+		this.currentFile = selectedFile;
+		txtStatusBar.clear();
+		txtArea.setText(FileUtils.readFile(currentFile));
+		lblBarraStatus.setText(currentFile.getPath() + " | " + currentFile.getName());
 	}
+	
 	@FXML
 	public void btnSaveOnClick() {
 		
@@ -115,6 +132,7 @@ public class TelaController implements Initializable {
 	}
 
 	public void bindKeys() {
+		
 		setKeyCombinationListener(btnNew, KeyCode.N);
 		setKeyCombinationListener(btnOpen, KeyCode.O);
 		setKeyCombinationListener(btnSave, KeyCode.S);

@@ -9,13 +9,13 @@
 
 <!--<?import org.fxmisc.richtext.CodeArea?>-->
 
-<AnchorPane fx:id="mainPane" minWidth="801.0" prefHeight="578.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">	
+<AnchorPane fx:id="mainPane" minWidth="801.0" prefHeight="600.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">	
    <children>
            
       <TextArea fx:id="txtArea" layoutX="126.0" layoutY="21.0" prefHeight="399.0" prefWidth="677.0" style="-fx-vbar-policy: always; -fx-hbar-policy: always;" />
       <Pane layoutY="8.0" prefHeight="563.0" prefWidth="181.0">
          <children>
-            <Button fx:id="btnNew" alignment="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnNewOnClick" text="new [ctrl-n]" textAlignment="CENTER"/>
+            <Button fx:id="btnNew" alignment="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnNewOnClick" text="new [ctrl-n]" textAlignment="CENTER" />
             <Button fx:id="btnOpen" alignment="CENTER" layoutX="14.0" layoutY="64.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnOpenOnClick" text="open [ctrl-o]" textAlignment="CENTER" />
             <Button fx:id="btnSave" alignment="CENTER" layoutX="14.0" layoutY="114.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnSaveOnClick" text="save ctrl-s]" textAlignment="CENTER" />
             <Button fx:id="btnCopy" alignment="CENTER" layoutX="14.0" layoutY="164.0" maxHeight="50.0" maxWidth="120.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnCopyOnClick" text="copy [ctrl-c]" textAlignment="CENTER" />
@@ -26,5 +26,6 @@
          </children>
       </Pane>
       <TextArea fx:id="txtStatusBar" layoutX="126.0" layoutY="428.0" prefHeight="136.0" prefWidth="677.0" />
+      <Label fx:id="lblBarraStatus" layoutX="14.0" layoutY="571.0" prefHeight="17.0" prefWidth="327.0" />
    </children>
 </AnchorPane>
