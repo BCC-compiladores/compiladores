@@ -6,7 +6,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import view.TelaController;
 
@@ -36,6 +35,8 @@ public class MainApplication extends Application{
 		stage.setResizable(false);
 		stage.setTitle("Compilador");
 		stage.show();
+
+		telaController.setStage(stage);
 		
 	}
 }
