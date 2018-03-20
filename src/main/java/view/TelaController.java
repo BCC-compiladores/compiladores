@@ -1,5 +1,6 @@
 package view;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -13,7 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
-
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import utils.Messages;
 
 @SuppressWarnings("restriction")
@@ -31,9 +33,14 @@ public class TelaController implements Initializable {
 	@FXML private TextArea txtStatusBar;
 	
 	private Scene scene;
-	
+	private Stage stage;
+
 	public void setScene(Scene scene) {
 		this.scene = scene;
+	}
+
+	public void setStage(Stage stage) {
+		this.stage = stage;
 	}
 
 	@Override
@@ -47,7 +54,10 @@ public class TelaController implements Initializable {
 	}
 	@FXML
 	public void btnOpenOnClick() {
-		
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open Resource File");
+		File selectedFile = fileChooser.showOpenDialog(stage);
+		//TODO: Save this file to current file being edited
 	}
 	@FXML
 	public void btnSaveOnClick() {
@@ -55,27 +65,17 @@ public class TelaController implements Initializable {
 	}
 	@FXML
 	public void btnCopyOnClick() {
-        copyTextToClipboard();
+		txtArea.copy();
 	}
 	@FXML
 	public void btnPasteOnClick() {
-	    txtArea.appendText(Clipboard.getSystemClipboard().getString());
+		txtArea.paste();
 	}
 
 	@FXML
 	public void btnCutOnClick() {
-        copyTextToClipboard();
-        txtArea.clear();
+        txtArea.cut();
 	}
-
-    /**
-     * Copies the content of {@code txtArea} to the clipboard
-     */
-    private void copyTextToClipboard() {
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(txtArea.getText());
-        Clipboard.getSystemClipboard().setContent(content);
-    }
 
     @FXML
 	public void btnCompileOnClick(ActionEvent e) {
@@ -125,8 +125,10 @@ public class TelaController implements Initializable {
 		setKeyListener(btnAbout, KeyCode.F1);
 		setKeyListener(btnCompile, KeyCode.F9);
 	}
-	
-	//Bind into scene when the event is a single key press
+
+	/**
+	 * Bind into scene when the event is a single key press
+	 */
 	private void setKeyListener(Button b, KeyCode k) {
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
 			if (ke.getCode() == k) {
