@@ -25,14 +25,17 @@ public class MainApplication extends Application{
 		Parent mainParent = fxmlLoader.load();
 		
 		Scene scene = new Scene(mainParent);
+
 		
 		TelaController telaController = fxmlLoader.getController();
 		telaController.setScene(scene);
 		telaController.bindKeys();
 		
 		Stage stage = new Stage();
+		stage.setMinHeight(620);
+		stage.setMinWidth(900);
 		stage.setScene(scene);
-		stage.setResizable(false);
+		stage.setResizable(true);
 		stage.setTitle("Compilador");
 		stage.show();
 
@@ -40,3 +43,4 @@ public class MainApplication extends Application{
 		
 	}
 }
+

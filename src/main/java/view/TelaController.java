@@ -43,23 +43,40 @@ public class TelaController implements Initializable {
 
 	public void setScene(Scene scene) {
 		this.scene = scene;
+		
 	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+		bindResize();
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		styleButtons();
 	}
+	public void bindResize() {
+		stage.widthProperty().addListener((obs, oldV, newV) -> {
+			System.out.println("width:"+newV);
+			txtArea.setMinWidth(newV.doubleValue() - 160);
+			txtStatusBar.setMinWidth(newV.doubleValue() - 160);
+			lblBarraStatus.setMinWidth(newV.doubleValue() - 160);
+		});
 
+		stage.heightProperty().addListener((obs, oldV, newV) -> {
+			System.out.println("height:"+newV);
+			txtArea.setMinHeight(newV.doubleValue() - 250);
+			txtStatusBar.setLayoutY(newV.doubleValue() - (txtStatusBar.heightProperty().doubleValue() + lblBarraStatus.heightProperty().doubleValue() + 50));
+			lblBarraStatus.setLayoutY(newV.doubleValue() - (lblBarraStatus.heightProperty().doubleValue() + 45));
+		});
+	}
 	@FXML
 	public void btnNewOnClick() {
 	    currentFile = null;
 		txtArea.clear();
 		txtStatusBar.clear();
 		lblBarraStatus.setText("");
+		
 	}
 
 	@FXML
