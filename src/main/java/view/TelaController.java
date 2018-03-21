@@ -56,6 +56,7 @@ public class TelaController implements Initializable {
 
 	@FXML
 	public void btnNewOnClick() {
+	    currentFile = null;
 		txtArea.clear();
 		txtStatusBar.clear();
 		lblBarraStatus.setText("");
@@ -73,13 +74,34 @@ public class TelaController implements Initializable {
 		this.currentFile = selectedFile;
 		txtStatusBar.clear();
 		txtArea.setText(FileUtils.readFile(currentFile));
-		lblBarraStatus.setText(currentFile.getPath() + " | " + currentFile.getName());
-	}
-	
-	@FXML
-	public void btnSaveOnClick() {
-		
-	}
+        updateFileLabel();
+    }
+
+    private void updateFileLabel() {
+	    if(Objects.isNull(currentFile)){
+            lblBarraStatus.setText("");
+        }else{
+            lblBarraStatus.setText(currentFile.getPath() + " | " + currentFile.getName());
+        }
+    }
+
+    @FXML
+	public void btnSaveOnClick() throws IOException {
+
+	    if(Objects.isNull(currentFile)){
+            File selectedFile = FileUtils.getFileChooser().showSaveDialog(stage);
+
+            if(Objects.isNull(selectedFile)){
+                return;
+            }
+
+            currentFile = selectedFile;
+        }
+
+        FileUtils.writeToFile(txtArea.getText(), currentFile);
+
+        updateFileLabel();
+    }
 	@FXML
 	public void btnCopyOnClick() {
 		txtArea.copy();
@@ -95,7 +117,7 @@ public class TelaController implements Initializable {
 	}
 
     @FXML
-	public void btnCompileOnClick(ActionEvent e) {
+	public void btnCompileOnClick() {
 		txtStatusBar.setText(Messages.NOT_YET_IMPLEMENTED.get());
 	}
 	
@@ -157,7 +179,7 @@ public class TelaController implements Initializable {
 
 	private void setKeyCombinationListener(Button btn, KeyCode key) {
 		btn.getScene().getAccelerators().put(new KeyCodeCombination(key, KeyCombination.CONTROL_DOWN),
-				() -> btn.fire());
+				btn::fire);
 	}
 
 	private ImageView getImageFromResources(String imgName){

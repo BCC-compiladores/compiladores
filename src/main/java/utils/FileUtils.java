@@ -1,7 +1,6 @@
 package utils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -25,4 +24,13 @@ public class FileUtils {
         }
         return sb.toString();
 	}
+
+    public static void writeToFile(String string, File file) throws IOException {
+        try (
+                BufferedReader reader = new BufferedReader(new StringReader(string));
+                PrintWriter writer = new PrintWriter(new FileWriter(file))
+        ) {
+            reader.lines().forEach(writer::println);
+        }
+    }
 }
