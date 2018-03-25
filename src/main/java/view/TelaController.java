@@ -3,8 +3,12 @@ package view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +18,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 import javafx.stage.Stage;
@@ -33,8 +36,8 @@ public class TelaController implements Initializable {
 	@FXML private Button btnCut;
 	@FXML private Button btnCompile;
 	@FXML private Button btnAbout;
-	@FXML private TextArea txtArea;
-	@FXML private TextArea txtStatusBar;
+	@FXML private CodeArea txtArea;
+	@FXML private TextArea txtMessageArea;
 	@FXML private Label lblBarraStatus;
 	
 	private Scene scene;
@@ -52,13 +55,15 @@ public class TelaController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		styleButtons();
+		txtMessageArea.setEditable(false);
+		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));		
 	}
 
 	@FXML
 	public void btnNewOnClick() {
 	    currentFile = null;
 		txtArea.clear();
-		txtStatusBar.clear();
+		txtMessageArea.clear();
 		lblBarraStatus.setText("");
 	}
 
@@ -72,8 +77,10 @@ public class TelaController implements Initializable {
 		}
 
 		this.currentFile = selectedFile;
-		txtStatusBar.clear();
-		txtArea.setText(FileUtils.readFile(currentFile));
+		txtMessageArea.clear();
+		txtArea.clear();
+		
+		Arrays.asList(FileUtils.readFile(currentFile).split("\n")).forEach(s -> txtArea.appendText(s + "\n"));
         updateFileLabel();
     }
 
@@ -118,12 +125,12 @@ public class TelaController implements Initializable {
 
     @FXML
 	public void btnCompileOnClick() {
-		txtStatusBar.setText(Messages.NOT_YET_IMPLEMENTED.get());
+    	txtMessageArea.setText(Messages.NOT_YET_IMPLEMENTED.get());
 	}
 	
 	@FXML
 	public void btnAboutOnClick() {
-		txtStatusBar.setText(Messages.MEMBERS.get());
+		txtMessageArea.setText(Messages.MEMBERS.get());
 	}
 	
 	private void styleButtons() {
