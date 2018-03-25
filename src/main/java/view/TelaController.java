@@ -79,8 +79,7 @@ public class TelaController implements Initializable {
 		this.currentFile = selectedFile;
 		txtMessageArea.clear();
 		txtArea.clear();
-		
-		Arrays.asList(FileUtils.readFile(currentFile).split("\n")).forEach(s -> txtArea.appendText(s + "\n"));
+		txtArea.appendText(FileUtils.readFile(currentFile));
         updateFileLabel();
     }
 
