@@ -56,18 +56,17 @@ public class TelaController implements Initializable {
 		styleButtons();
 	}
 	public void bindResize() {
+		
 		stage.widthProperty().addListener((obs, oldV, newV) -> {
-			System.out.println("width:"+newV);
 			txtArea.setMinWidth(newV.doubleValue() - 160);
 			txtStatusBar.setMinWidth(newV.doubleValue() - 160);
 			lblBarraStatus.setMinWidth(newV.doubleValue() - 160);
 		});
 
 		stage.heightProperty().addListener((obs, oldV, newV) -> {
-			System.out.println("height:"+newV);
-			txtArea.setMinHeight(newV.doubleValue() - 250);
-			txtStatusBar.setLayoutY(newV.doubleValue() - (txtStatusBar.heightProperty().doubleValue() + lblBarraStatus.heightProperty().doubleValue() + 50));
-			lblBarraStatus.setLayoutY(newV.doubleValue() - (lblBarraStatus.heightProperty().doubleValue() + 45));
+			txtArea.setMinHeight(newV.doubleValue() - 180);
+			txtStatusBar.setLayoutY(newV.doubleValue() - (txtStatusBar.heightProperty().doubleValue() + lblBarraStatus.heightProperty().doubleValue() + 42));
+			lblBarraStatus.setLayoutY(newV.doubleValue() - (lblBarraStatus.heightProperty().doubleValue() + 35));
 		});
 	}
 	@FXML

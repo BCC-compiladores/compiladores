@@ -32,6 +32,9 @@ public class MainApplication extends Application{
 		telaController.bindKeys();
 		
 		Stage stage = new Stage();
+		stage.setHeight(620);
+		stage.setWidth(900);
+		stage.sizeToScene();
 		stage.setMinHeight(620);
 		stage.setMinWidth(900);
 		stage.setScene(scene);

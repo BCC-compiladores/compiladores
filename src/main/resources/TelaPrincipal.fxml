@@ -12,7 +12,7 @@
 <AnchorPane fx:id="mainPane" minWidth="900.0" prefHeight="620.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">	
    <children>
            
-      <TextArea fx:id="txtArea" layoutX="126.0" layoutY="5.0" prefHeight="480.0" prefWidth="750.0" style="-fx-vbar-policy: always; -fx-hbar-policy: always;" />
+      <TextArea fx:id="txtArea" layoutX="126.0" layoutY="5.0" minHeight="480.0" minWidth="750.0" prefWidth="750.0" style="-fx-vbar-policy: always; -fx-hbar-policy: always;" />
       <Pane layoutY="-10.0" prefHeight="563.0" prefWidth="181.0">
          <children>
             <Button fx:id="btnNew" alignment="CENTER" layoutX="14.0" layoutY="14.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnNewOnClick" text="new [ctrl-n]" textAlignment="CENTER" />
@@ -25,7 +25,7 @@
             <Button fx:id="btnAbout" alignment="CENTER" layoutX="14.0" layoutY="364.0" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#btnAboutOnClick" prefHeight="54.0" prefWidth="109.0" text="about [F1]" textAlignment="CENTER" />
          </children>
       </Pane>
-      <TextArea fx:id="txtStatusBar" layoutX="126.0" layoutY="500.0" prefHeight="105.0" prefWidth="750.0"/>
-      <Label fx:id="lblBarraStatus" layoutX="14.0" layoutY="571.0" prefHeight="25.0" prefWidth="750.0" />
+      <TextArea fx:id="txtStatusBar" layoutX="126.0" layoutY="490.0" prefHeight="105.0" prefWidth="750.0"/>
+      <Label fx:id="lblBarraStatus" layoutX="14.0" layoutY="600.0" prefHeight="25.0" prefWidth="750.0" />
    </children>
 </AnchorPane>
