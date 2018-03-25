@@ -20,7 +20,7 @@ public class FileUtils {
 	public static String readFile(File selectedFile) throws IOException {
         StringBuilder sb = new StringBuilder();
         for(String s : Files.readAllLines(Paths.get(selectedFile.toString()))){
-            sb.append(s);
+            sb.append(s).append(System.getProperty("line.separator"));
         }
         return sb.toString();
 	}
