@@ -7,15 +7,14 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
@@ -56,7 +55,7 @@ public class TelaController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		styleButtons();
 		txtMessageArea.setEditable(false);
-		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));		
+		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));
 	}
 
 	@FXML
