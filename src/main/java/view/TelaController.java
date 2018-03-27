@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -20,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 import javafx.stage.Stage;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 
 import utils.FileUtils;
 import utils.Messages;
@@ -38,6 +41,8 @@ public class TelaController implements Initializable {
 	@FXML private CodeArea txtArea;
 	@FXML private TextArea txtMessageArea;
 	@FXML private Label lblBarraStatus;
+	@FXML private VirtualizedScrollPane<CodeArea> txtAreaPane;
+	@FXML private ScrollPane scrollPaneText;
 	
 	private Scene scene;
 	private Stage stage;
@@ -45,10 +50,12 @@ public class TelaController implements Initializable {
 
 	public void setScene(Scene scene) {
 		this.scene = scene;
+		
 	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+		bindResize();
 	}
 
 	@Override
@@ -56,14 +63,31 @@ public class TelaController implements Initializable {
 		styleButtons();
 		txtMessageArea.setEditable(false);
 		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));
-	}
+		txtAreaPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
+		txtAreaPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 
+	}
+	public void bindResize() {
+		
+		stage.widthProperty().addListener((obs, oldV, newV) -> {
+			txtAreaPane.setMinWidth(newV.doubleValue() - 160);
+			scrollPaneText.setMinWidth(newV.doubleValue() - 160);
+			lblBarraStatus.setMinWidth(newV.doubleValue() - 160);
+		});
+
+		stage.heightProperty().addListener((obs, oldV, newV) -> {
+			txtAreaPane.setMinHeight(newV.doubleValue() - 180);
+			scrollPaneText.setLayoutY(newV.doubleValue() - (scrollPaneText.heightProperty().doubleValue() + lblBarraStatus.heightProperty().doubleValue() + 42));
+			lblBarraStatus.setLayoutY(newV.doubleValue() - (lblBarraStatus.heightProperty().doubleValue() + 35));
+		});
+	}
 	@FXML
 	public void btnNewOnClick() {
 	    currentFile = null;
 		txtArea.clear();
 		txtMessageArea.clear();
 		lblBarraStatus.setText("");
+		
 	}
 
 	@FXML
