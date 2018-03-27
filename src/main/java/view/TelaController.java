@@ -72,12 +72,14 @@ public class TelaController implements Initializable {
 		stage.widthProperty().addListener((obs, oldV, newV) -> {
 			txtAreaPane.setMinWidth(newV.doubleValue() - 160);
 			scrollPaneText.setMinWidth(newV.doubleValue() - 160);
+			txtMessageArea.setMinWidth(newV.doubleValue() - 160);
 			lblBarraStatus.setMinWidth(newV.doubleValue() - 160);
 		});
 
 		stage.heightProperty().addListener((obs, oldV, newV) -> {
 			txtAreaPane.setMinHeight(newV.doubleValue() - 180);
 			scrollPaneText.setLayoutY(newV.doubleValue() - (scrollPaneText.heightProperty().doubleValue() + lblBarraStatus.heightProperty().doubleValue() + 42));
+			txtMessageArea.setLayoutY(newV.doubleValue() - (txtMessageArea.heightProperty().doubleValue() + txtMessageArea.heightProperty().doubleValue() + 42));
 			lblBarraStatus.setLayoutY(newV.doubleValue() - (lblBarraStatus.heightProperty().doubleValue() + 35));
 		});
 	}

@@ -5,7 +5,7 @@
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 
 <AnchorPane fx:id="mainPane" minWidth="900.0" prefHeight="620.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">	
-    <VirtualizedScrollPane fx:id="txtAreaPane" layoutX="120.0" layoutY="5.0" minHeight="380.0" minWidth="677.0">
+    <VirtualizedScrollPane fx:id="txtAreaPane" layoutX="126.0" layoutY="5.0" minHeight="380.0" minWidth="750.0">
         <content>
             <CodeArea fx:id="txtArea"/>
        </content>
