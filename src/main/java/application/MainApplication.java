@@ -25,8 +25,6 @@ public class MainApplication extends Application{
 		Parent mainParent = fxmlLoader.load();
 		
 		Scene scene = new Scene(mainParent);
-
-		scene.getStylesheets().add("resources/styles.css");
 		
 		TelaController telaController = fxmlLoader.getController();
 		telaController.setScene(scene);
@@ -41,10 +39,11 @@ public class MainApplication extends Application{
 		stage.setScene(scene);
 		stage.setResizable(true);
 		stage.setTitle("Compilador");
+		
+		telaController.setStage(stage);
 
 		stage.show();
 
-		telaController.setStage(stage);
 		
 	}
 }

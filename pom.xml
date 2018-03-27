@@ -35,7 +35,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-						<finalName>ReconhecedorLinguagemRegular</finalName>
+						<finalName>compilador</finalName>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>

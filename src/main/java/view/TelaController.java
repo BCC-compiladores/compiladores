@@ -3,16 +3,13 @@ package view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javafx.scene.Node;
 import javafx.scene.control.*;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.fxml.FXML;
@@ -50,7 +47,6 @@ public class TelaController implements Initializable {
 
 	public void setScene(Scene scene) {
 		this.scene = scene;
-		
 	}
 
 	public void setStage(Stage stage) {
@@ -67,7 +63,7 @@ public class TelaController implements Initializable {
 		txtAreaPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 
 	}
-	public void bindResize() {
+	private void bindResize() {
 		
 		stage.widthProperty().addListener((obs, oldV, newV) -> {
 			txtAreaPane.setMinWidth(newV.doubleValue() - 160);
@@ -88,8 +84,7 @@ public class TelaController implements Initializable {
 	    currentFile = null;
 		txtArea.clear();
 		txtMessageArea.clear();
-		lblBarraStatus.setText("");
-		
+		lblBarraStatus.setText("");		
 	}
 
 	@FXML
