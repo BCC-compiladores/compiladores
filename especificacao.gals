@@ -1,0 +1,75 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+Package = src.main.java.gals
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+#RegularDefinitions
+DIGITO : [0-9]
+INTEIRO: [1-9]
+LETRA : [a-zA-Z]
+BARRA: "/"
+LINE_COMMENT: {BARRA}{BARRA}[^\n]*
+
+
+#Tokens
+//Ignorar caracteres de formatação
+:[\t\n\s]
+//fim
+//comentario
+:!{LINE_COMMENT}
+:!{BARRA}\* ( [^\*] | (\*)+ [^\*/] )* ( \* )+{BARRA}
+//fim
+//tokens 
+IDENTIFICADOR: ({LETRA}) (({LETRA}|{DIGITO})| (_{LETRA}+) | (_{DIGITO}+))*_?
+CONSTANTE_INTEIRA: (0 | {INTEIRO}|{INTEIRO}{DIGITO}*)
+CONSTANTE_REAL: (0 | {INTEIRO}|{INTEIRO}{DIGITO}*)(,{DIGITO}+)
+CONSTANTE_CARACTER: \"([^\n\\\"] | \\ (\"|\\) )* \"
+
+
+//palavras reservada
+BOOL = IDENTIFICADOR : "bool"
+CONSTS = IDENTIFICADOR : "consts"
+DEF = IDENTIFICADOR : "def"
+END = IDENTIFICADOR : "end"
+EXECUTE = IDENTIFICADOR : "execute"
+FALSE = IDENTIFICADOR : "false"
+FLOAT = IDENTIFICADOR : "float"
+GET = IDENTIFICADOR : "get"
+IFFALSE = IDENTIFICADOR : "ifFalse"
+IFTRUE = IDENTIFICADOR : "ifTrue"
+INPUT = IDENTIFICADOR : "input"
+INT = IDENTIFICADOR : "int"
+PRINT = IDENTIFICADOR : "print"
+PRINTLN = IDENTIFICADOR : "println"
+SET = IDENTIFICADOR : "set"
+STR = IDENTIFICADOR : "str"
+TRUE = IDENTIFICADOR : "true"
+TYPES = IDENTIFICADOR : "types"
+VAR = IDENTIFICADOR : "var"
+WHILEFALSE = IDENTIFICADOR : "whileFalse"
+WHILETRUE = IDENTIFICADOR : "whileTrue"
+
+//simbolos especiais
+"+"
+"-"
+"*"
+"/"
+":"
+"("
+")"
+"="
+":="
+","
+"&&"
+"||"
+"!"
+"!="
+"<"
+"<="
+">"
+">="
+
