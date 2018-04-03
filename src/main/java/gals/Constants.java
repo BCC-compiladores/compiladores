@@ -9,6 +9,8 @@ public interface Constants extends ScannerConstants
     int t_CONSTANTE_INTEIRA = 3;
     int t_CONSTANTE_REAL = 4;
     int t_CONSTANTE_CARACTER = 5;
+
+    // PALAVRAS_RESERVADAS
     int t_BOOL = 6;
     int t_CONSTS = 7;
     int t_DEF = 8;
@@ -30,6 +32,8 @@ public interface Constants extends ScannerConstants
     int t_VAR = 24;
     int t_WHILEFALSE = 25;
     int t_WHILETRUE = 26;
+
+    //SIMBOLO_ESPECIAL
     int t_TOKEN_27 = 27; //"+"
     int t_TOKEN_28 = 28; //"-"
     int t_TOKEN_29 = 29; //"*"

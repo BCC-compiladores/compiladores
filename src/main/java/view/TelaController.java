@@ -6,6 +6,10 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import gals.ConvertIdToClass;
+import gals.LexicalError;
+import gals.Lexico;
+import gals.Token;
 import javafx.scene.control.*;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -144,7 +148,31 @@ public class TelaController implements Initializable {
 
     @FXML
 	public void btnCompileOnClick() {
-    	txtMessageArea.setText(Messages.NOT_YET_IMPLEMENTED.get());
+
+	    if(txtArea.getText().trim().isEmpty()){
+
+            txtMessageArea.clear();
+            txtMessageArea.appendText(Messages.EMPTY_PROGRAM.get());
+
+        } else {
+
+            Lexico lexico = new Lexico();
+            lexico.setInput(txtArea.getText().trim());
+            try
+            {
+                Token t;
+                while ( (t = lexico.nextToken()) != null )
+                {
+                    System.out.print(t.getLexeme() + " - ");
+                    System.out.println(ConvertIdToClass.getClassFromID(t.getId()));
+                }
+            }
+            catch ( LexicalError e )
+            {
+                System.err.println(e.getMessage() + "e;, em" + e.getPosition());
+            }
+
+        }
 	}
 	
 	@FXML

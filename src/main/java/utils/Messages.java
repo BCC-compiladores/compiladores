@@ -6,7 +6,7 @@ package utils;
 
 public enum Messages {
 
-	NOT_YET_IMPLEMENTED("Compilação de programas ainda não implementada"),
+    EMPTY_PROGRAM("Nenhum programa para compilar"),
 	MEMBERS("Integrantes: \n Jonathan Luiz de Lara \n Matheus Heiden \n Pedro Henrique Pereira Alba");
 	
 	private final String msg;
