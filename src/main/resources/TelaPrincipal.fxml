@@ -5,30 +5,43 @@
 <?import javafx.scene.layout.Pane?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import org.fxmisc.richtext.CodeArea?>
-<AnchorPane fx:id="mainPane" minWidth="900.0" prefHeight="620.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">
-   <children>
-       <VirtualizedScrollPane fx:id="txtAreaPane" layoutX="130.0" layoutY="5.0" minHeight="380.0" minWidth="750.0">
-           <content>
-               <CodeArea fx:id="txtArea"/>
-          </content>
-       </VirtualizedScrollPane>
-         <Pane layoutY="-10.0" prefHeight="563.0" prefWidth="181.0">
-          <children>
-                  <Button fx:id="btnNew" alignment="CENTER" layoutX="3.0" layoutY="14.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnNewOnClick" text="new [ctrl-n]" textAlignment="CENTER" />
-                  <Button fx:id="btnOpen" alignment="CENTER" layoutX="3.0" layoutY="76.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnOpenOnClick" text="open [ctrl-o]" textAlignment="CENTER" />
-                  <Button fx:id="btnSave" alignment="CENTER" layoutX="3.0" layoutY="138.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnSaveOnClick" text="save [ctrl-s]" textAlignment="CENTER" />
-                  <Button fx:id="btnCopy" alignment="CENTER" layoutX="3.0" layoutY="200.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCopyOnClick" text="copy [ctrl-c]" textAlignment="CENTER" />
-                  <Button fx:id="btnPaste" alignment="CENTER" layoutX="3.0" layoutY="262.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnPasteOnClick" text="paste [ctrl-v]" textAlignment="CENTER" />
-                  <Button fx:id="btnCut" alignment="CENTER" layoutX="3.0" layoutY="324.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCutOnClick" text="cut [ctrl-x]" textAlignment="CENTER" />
-                  <Button fx:id="btnCompile" alignment="CENTER" layoutX="3.0" layoutY="386.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCompileOnClick" text="compile [F9]" textAlignment="CENTER" />
-                  <Button fx:id="btnAbout" alignment="CENTER" layoutX="3.0" layoutY="448.0" maxHeight="62.0" maxWidth="0.0" minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnAboutOnClick" prefHeight="54.0" prefWidth="109.0" text="about [F1]" textAlignment="CENTER" />
-          </children>
-         </Pane>
-         <ScrollPane fx:id="scrollPaneText" layoutX="130.0" layoutY="500.0" prefHeight="105.0" prefWidth="750.0" style="-fx-vbar-policy:always;-fx-hbar-policy:always;">
-            <content>
-            	<TextArea fx:id="txtMessageArea" layoutX="130.0" layoutY="500.0" prefHeight="105.0" prefWidth="750.0" style="-fx-vbar-policy:always;-fx-hbar-policy:always;" />
-            </content>
-         </ScrollPane>
-         <Label fx:id="lblBarraStatus" layoutX="14.0" layoutY="600.0" prefHeight="25.0" prefWidth="750.0"/>
-   </children>
+<AnchorPane minWidth="900.0" prefHeight="620.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">
+    <VirtualizedScrollPane fx:id="txtAreaPane" layoutX="130.0" layoutY="5.0" minHeight="380.0" minWidth="750.0">
+        <content>
+            <CodeArea fx:id="txtArea"/>
+        </content>
+    </VirtualizedScrollPane>
+    <Pane layoutY="-10.0" prefHeight="563.0" prefWidth="181.0">
+            <Button fx:id="btnNew" alignment="CENTER" layoutX="3.0" layoutY="14.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnNewOnClick"
+                    text="new [ctrl-n]" textAlignment="CENTER"/>
+            <Button fx:id="btnOpen" alignment="CENTER" layoutX="3.0" layoutY="76.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnOpenOnClick"
+                    text="open [ctrl-o]" textAlignment="CENTER"/>
+            <Button fx:id="btnSave" alignment="CENTER" layoutX="3.0" layoutY="138.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnSaveOnClick"
+                    text="save [ctrl-s]" textAlignment="CENTER"/>
+            <Button fx:id="btnCopy" alignment="CENTER" layoutX="3.0" layoutY="200.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCopyOnClick"
+                    text="copy [ctrl-c]" textAlignment="CENTER"/>
+            <Button fx:id="btnPaste" alignment="CENTER" layoutX="3.0" layoutY="262.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnPasteOnClick"
+                    text="paste [ctrl-v]" textAlignment="CENTER"/>
+            <Button fx:id="btnCut" alignment="CENTER" layoutX="3.0" layoutY="324.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCutOnClick"
+                    text="cut [ctrl-x]" textAlignment="CENTER"/>
+            <Button fx:id="btnCompile" alignment="CENTER" layoutX="3.0" layoutY="386.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnCompileOnClick"
+                    text="compile [F9]" textAlignment="CENTER"/>
+            <Button fx:id="btnAbout" alignment="CENTER" layoutX="3.0" layoutY="448.0" maxHeight="62.0" maxWidth="0.0"
+                    minHeight="62.0" minWidth="120.0" mnemonicParsing="false" onAction="#btnAboutOnClick"
+                    prefHeight="54.0" prefWidth="109.0" text="about [F1]" textAlignment="CENTER"/>
+    </Pane>
+    <ScrollPane fx:id="scrollPaneText" layoutX="130.0" layoutY="500.0" prefHeight="105.0" prefWidth="750.0"
+                style="-fx-vbar-policy:always;-fx-hbar-policy:always;">
+            <TextArea fx:id="txtMessageArea" layoutX="130.0" layoutY="500.0" prefHeight="105.0" prefWidth="750.0"
+                      style="-fx-vbar-policy:always;-fx-hbar-policy:always;"/>
+    </ScrollPane>
+    <Label fx:id="lblBarraStatus" layoutX="14.0" layoutY="600.0" prefHeight="25.0" prefWidth="750.0"/>
 </AnchorPane>
