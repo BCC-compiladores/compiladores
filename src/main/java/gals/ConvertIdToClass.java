@@ -1,40 +1,29 @@
 package gals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.sun.javafx.collections.MappingChange;
+
+import java.util.*;
 
 public class ConvertIdToClass {
 
-    private static List<Integer> palavrasReservadas = Arrays.asList(6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26);
-    private static List<Integer> simbolosEspeciais = Arrays.asList(27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44);
-    private static List<Integer> identificadores = Collections.singletonList(2);
-    private static List<Integer> constantesInteiras = Collections.singletonList(3);
-    private static List<Integer> constantesReais = Collections.singletonList(4);
-    private static List<Integer> constantesCaracter = Collections.singletonList(5);
+    private static Map<String, List<Integer>> valores = new HashMap<>();
 
-       public static String getClassFromID(int id){
-
-        if(palavrasReservadas.contains(id)){
-            return "Palavra reservada";
-        }
-        if(simbolosEspeciais.contains(id)){
-            return "Simbolo especial";
-        }
-        if(identificadores.contains(id)){
-            return "Identificador";
-        }
-        if(constantesCaracter.contains(id)){
-            return "Caractere";
-        }
-        if(constantesInteiras.contains(id)){
-            return "Constante inteira";
-        }
-        if(constantesReais.contains(id)){
-            return "Constante real";
-        }
-
-        return "";
+    static{
+        valores.put("Palavra reservada", Arrays.asList(6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26));
+        valores.put("Simbolo especial", Arrays.asList(27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44));
+        valores.put("Identificador", Collections.singletonList(2));
+        valores.put("Constante inteira", Collections.singletonList(3));
+        valores.put("Constante real", Collections.singletonList(4));
+        valores.put("Caractere", Collections.singletonList(5));
     }
 
+       public static String getClassFromID(int id){
+           for (String key : valores.keySet()) {
+               Optional<Integer> valorEncontrado = valores.get(key).stream().filter(i -> i == id).findAny();
+               if(valorEncontrado.isPresent()){
+                   return key;
+               }
+           }
+        return "Identificador náo encontrado";
+    }
 }
