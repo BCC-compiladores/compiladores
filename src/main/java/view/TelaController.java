@@ -157,7 +157,7 @@ public class TelaController implements Initializable {
         } else {
 
             Lexico lexico = new Lexico();
-            lexico.setInput(txtArea.getText().trim());
+            lexico.setInput(txtArea.getText());
             try
             {
                 Token t;
@@ -169,10 +169,26 @@ public class TelaController implements Initializable {
             }
             catch ( LexicalError e )
             {
-                System.err.println(e.getMessage() + "e;, em" + e.getPosition());
+				System.err.println("Erro na linha "+getLineByPosition(e.getPosition())+" - "+e.getMessage());
+                //System.err.println(e.getMessage() + "e;, em" + );
             }
 
         }
+	}
+
+	private int getLineByPosition(int position) {
+		String content = txtArea.getText();
+		int newLineQty = 0;
+		for (int i = 0; i < content.length(); i++) {
+			if (i == position) {
+				break;
+			}
+			if(content.charAt(i) == '\n'){
+				newLineQty++;
+			}
+		}
+
+		return newLineQty+1;
 	}
 	
 	@FXML
