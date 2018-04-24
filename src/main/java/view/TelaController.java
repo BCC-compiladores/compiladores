@@ -149,34 +149,47 @@ public class TelaController implements Initializable {
     @FXML
 	public void btnCompileOnClick() {
 
-	    if(txtArea.getText().trim().isEmpty()){
+        txtMessageArea.clear();
 
-            txtMessageArea.clear();
+        if(txtArea.getText().trim().isEmpty()){
             txtMessageArea.appendText(Messages.EMPTY_PROGRAM.get());
-
         } else {
 
             Lexico lexico = new Lexico();
             lexico.setInput(txtArea.getText());
             try
             {
+                StringBuilder resultadoAnalise = new StringBuilder();
                 Token t;
+                resultadoAnalise.append("linha\t\tclasse\t\t\t\t\tlexema\n");
                 while ( (t = lexico.nextToken()) != null )
                 {
-                    System.out.print(t.getLexeme() + " - ");
-                    System.out.println(ConvertIdToClass.getClassFromID(t.getId()));
+                    resultadoAnalise.append(String.valueOf(getLineByPosition(t.getPosition())));
+                    resultadoAnalise.append("\t\t");
+
+                    String classID =  ConvertIdToClass.getClassFromID(t.getId());
+                    resultadoAnalise.append(classID);
+                   // txtMessageArea.appendText("\t\t\t\t");
+                    resultadoAnalise.append(padLeft(t.getLexeme().trim(), 50 - classID.length()));
+                    resultadoAnalise.append("\n");
                 }
+
+                txtMessageArea.appendText(resultadoAnalise.toString());
+                txtMessageArea.appendText("\nPrograma compilado com sucesso");
             }
             catch ( LexicalError e )
             {
-				System.err.println("Erro na linha "+getLineByPosition(e.getPosition())+" - "+e.getMessage());
-                //System.err.println(e.getMessage() + "e;, em" + );
+                String errorMessage = "Erro na linha %s - %s %s";
+                if (e.getMessage().contains("simbolo inválido")) {
+                    errorMessage = String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage());
+                }
+                txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
             }
 
         }
 	}
 
-	private int getLineByPosition(int position) {
+	private String getLineByPosition(int position) {
 		String content = txtArea.getText();
 		int newLineQty = 0;
 		for (int i = 0; i < content.length(); i++) {
@@ -188,7 +201,7 @@ public class TelaController implements Initializable {
 			}
 		}
 
-		return newLineQty+1;
+		return String.valueOf(newLineQty+1);
 	}
 	
 	@FXML
@@ -255,4 +268,11 @@ public class TelaController implements Initializable {
 	private ImageView getImageFromResources(String imgName){
 		return new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("imagens/" + imgName + ".png")));
 	}
+
+    public static String padLeft(String s, int n) {
+        return String.format("%1$" + n + "s", s);
+    }
+    public static String padRight(String s, int n) {
+        return String.format("%1$-" + n + "s", s);
+    }
 }

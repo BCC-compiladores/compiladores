@@ -3,6 +3,15 @@ package gals;
 public class AnalysisError extends Exception
 {
     private int position;
+    private String word;
+
+    public AnalysisError(String msg, int position, String word)
+    {
+        super(msg);
+        this.position = position;
+        this.word = word;
+    }
+
 
     public AnalysisError(String msg, int position)
     {
@@ -19,6 +28,10 @@ public class AnalysisError extends Exception
     public int getPosition()
     {
         return position;
+    }
+
+    public String getWord() {
+        return word;
     }
 
     public String toString()
