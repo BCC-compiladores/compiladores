@@ -1,12 +1,15 @@
 #Options
 GenerateScanner = true
-GenerateParser = false
+GenerateParser = true
 Language = Java
 ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
 Package = src.main.java.gals
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
+Parser = LL
 #RegularDefinitions
 DIGITO : [0-9]
 INTEIRO: [1-9]
@@ -73,3 +76,19 @@ WHILETRUE = IDENTIFICADOR : "whileTrue"
 ">"
 ">="
 
+#NonTerminals
+<expressao>
+<elemento>
+<relacional>
+<operador_relacional>
+<aritmetica>
+<termo>
+<fator>
+#Grammar
+<expressao>::=<expressao> "&&" <elemento> | <expressao>  "||" <elemento> | <elemento>;
+<elemento> ::= <relacional> | TRUE | FALSE |  "!"<elemento>;
+<relacional> ::= <aritmetica> <operador_relacional> <aritmetica> | <aritmetica>;
+<operador_relacional> ::=  "=" |  "!=" |  "<" | "<=" | ">" | ">=" ;
+<aritmetica> ::= <aritmetica>  "+" <termo>  | <aritmetica>  "-" <termo>  | <termo>;
+<termo> ::= <termo>  "*" <fator> | <termo>  "/" <fator> | <fator>;
+<fator> ::= IDENTIFICADOR |  IDENTIFICADOR GET "(" IDENTIFICADOR ")" | CONSTANTE_INTEIRA | CONSTANTE_REAL | CONSTANTE_CARACTER |  "(" <expressao> ")" | "+" <fator> |  "-" <fator>;
