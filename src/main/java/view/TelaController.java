@@ -9,6 +9,10 @@ import java.util.ResourceBundle;
 import gals.ConvertIdToClass;
 import gals.LexicalError;
 import gals.Lexico;
+import gals.SemanticError;
+import gals.Semantico;
+import gals.Sintatico;
+import gals.SyntaticError;
 import gals.Token;
 import javafx.scene.control.*;
 
@@ -157,7 +161,7 @@ public class TelaController implements Initializable {
 
             Lexico lexico = new Lexico();
             lexico.setInput(txtArea.getText());
-            try
+            /*try
             {
                 StringBuilder resultadoAnalise = new StringBuilder();
                 Token t;
@@ -184,8 +188,25 @@ public class TelaController implements Initializable {
                     errorMessage = String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage());
                 }
                 txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
+            }*/
+            Sintatico sintatico = new Sintatico();
+            try {
+            	sintatico.parse(lexico, null);            	
             }
-
+            catch (SyntaticError e) {
+            	String errorMessage = "Erro na linha %s - encontrado %s %s";
+            	txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage()));
+            }
+            catch (LexicalError e) {
+            	String errorMessage = "Erro na linha %s - %s %s";
+                if (e.getMessage().contains("simbolo inválido")) {
+                    errorMessage = String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage());
+                }
+                txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
+            }
+            catch (SemanticError err ) {
+            	
+            }
         }
 	}
 
