@@ -95,7 +95,6 @@ WHILETRUE = IDENTIFICADOR : "whileTrue"
 <COMPOSTO>                   
 <LISTA_DE_CAMPOS>            
 <CAMPO>                      
-<CONSTANTE>                  
 <LISTA_DE_IDENTIFICADORES>   
 <VALOR>                      
 <DECLARACAO_DE_VARIAVEIS>    

@@ -133,7 +133,7 @@ public class TelaController implements Initializable {
         }
 
         FileUtils.writeToFile(txtArea.getText(), currentFile);
-
+        txtMessageArea.clear();
         updateFileLabel();
     }
 	@FXML
@@ -191,11 +191,18 @@ public class TelaController implements Initializable {
             }*/
             Sintatico sintatico = new Sintatico();
             try {
-            	sintatico.parse(lexico, null);            	
+            	sintatico.parse(lexico, null);  
+            	txtMessageArea.setText("Programa compilado com sucesso!");
             }
             catch (SyntaticError e) {
             	String errorMessage = "Erro na linha %s - encontrado %s %s";
-            	txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage()));
+            	if (e.getToken().getId() == 1 || e.getToken().getId() == 3 || e.getToken().getId() == 4 || e.getToken().getId() == 5) {
+            		txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), ConvertIdToClass.getClassFromID(e.getToken().getId()), e.getMessage()));
+            	}	
+            	else {
+            		txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), e.getToken().getLexeme(), e.getMessage()));
+            	}
+            	
             }
             catch (LexicalError e) {
             	String errorMessage = "Erro na linha %s - %s %s";
