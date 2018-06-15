@@ -1226,7 +1226,7 @@ public interface ScannerConstants
         "simbolo inválido",
         "",
         "",
-        "Erro identificando CONSTANTE_CARACTER",
+        "constante caractere inválida ou não finalizada",
         "",
         "comentário de bloco inválido",
         "",
