@@ -1202,16 +1202,13 @@ public interface ScannerConstants
     int[] SPECIAL_CASES_VALUES =
         {  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
 
-    String[] SCANNER_ERROR =
+     String[] SCANNER_ERROR =
     {
-        "simbolo inválido",
+        "simbolo inv�lido",
         "",
         "",
-        "constante caractere inválida ou não finalizada",
-        "simbolo inválido",
-        "",
-        "",
-        "",
+        "constante caractere inv�lida ou n�o finalizada",
+        "simbolo inv�lido",
         "",
         "",
         "",
@@ -1223,12 +1220,15 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "simbolo inválido",
         "",
         "",
-        "constante caractere inválida ou não finalizada",
         "",
-        "comentário de bloco inválido",
+        "simbolo inv�lido",
+        "",
+        "",
+        "constante caractere inv�lida ou n�o finalizada",
+        "",
+        "coment�rio de bloco inv�lido",
         "",
         "Erro identificando CONSTANTE_REAL",
         "",
@@ -1236,7 +1236,7 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "comentário de linha inválido",
+        "coment�rio de linha inv�lido",
         "",
         "",
         "",

@@ -3,6 +3,7 @@ package view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -161,48 +162,22 @@ public class TelaController implements Initializable {
 
             Lexico lexico = new Lexico();
             lexico.setInput(txtArea.getText());
-            /*try
-            {
-                StringBuilder resultadoAnalise = new StringBuilder();
-                Token t;
-                resultadoAnalise.append("linha\t\tclasse\t\t\t\t\tlexema\n");
-                while ( (t = lexico.nextToken()) != null )
-                {
-                    resultadoAnalise.append(String.valueOf(getLineByPosition(t.getPosition())));
-                    resultadoAnalise.append("\t\t");
 
-                    String classID =  ConvertIdToClass.getClassFromID(t.getId());
-                    resultadoAnalise.append(classID);
-                   // txtMessageArea.appendText("\t\t\t\t");
-                    resultadoAnalise.append(padLeft(t.getLexeme().trim(), 50 - classID.length()));
-                    resultadoAnalise.append("\n");
-                }
-
-                txtMessageArea.appendText(resultadoAnalise.toString());
-                txtMessageArea.appendText("\nPrograma compilado com sucesso");
-            }
-            catch ( LexicalError e )
-            {
-                String errorMessage = "Erro na linha %s - %s %s";
-                if (e.getMessage().contains("simbolo inválido")) {
-                    errorMessage = String.format(errorMessage, getLineByPosition(e.getPosition()), e.getWord(), e.getMessage());
-                }
-                txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
-            }*/
             Sintatico sintatico = new Sintatico();
+            Semantico semantico = new Semantico();
+
             try {
-            	sintatico.parse(lexico, null);  
+            	sintatico.parse(lexico, semantico);
             	txtMessageArea.setText("Programa compilado com sucesso!");
             }
             catch (SyntaticError e) {
             	String errorMessage = "Erro na linha %s - encontrado %s %s";
-            	if (e.getToken().getId() == 1 || e.getToken().getId() == 3 || e.getToken().getId() == 4 || e.getToken().getId() == 5) {
+            	if (Arrays.asList(1, 3, 4, 5).contains(e.getToken().getId())) {
             		txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), ConvertIdToClass.getClassFromID(e.getToken().getId()), e.getMessage()));
             	}	
             	else {
             		txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), e.getToken().getLexeme(), e.getMessage()));
             	}
-            	
             }
             catch (LexicalError e) {
             	String errorMessage = "Erro na linha %s - %s %s";
@@ -212,7 +187,7 @@ public class TelaController implements Initializable {
                 txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
             }
             catch (SemanticError err ) {
-            	
+                System.err.println(err);
             }
         }
 	}
