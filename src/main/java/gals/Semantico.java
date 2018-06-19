@@ -1,5 +1,6 @@
 package gals;
 
+import org.apache.commons.text.TextStringBuilder;
 import utils.Operador;
 import utils.Tipo;
 
@@ -9,7 +10,7 @@ public class Semantico implements Constants
 {
 
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
-    StringBuilder codigo = new StringBuilder();
+    TextStringBuilder codigo = new TextStringBuilder();
     Operador operador;
 
     public void executeAction(int action, Token token)	throws SemanticError {
@@ -37,28 +38,24 @@ public class Semantico implements Constants
     }
 
     private void acao16(Token token) {
-        codigo.append("ret } } ");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ret } } ");
     }
 
     private void acao15(Token token) {
-        codigo.append(".assembly extern mscorlib {}\n" +
+        codigo.appendln(".assembly extern mscorlib {}\n" +
                 " .assembly _codigo_objeto{}\n" +
                 " .module _codigo_objeto.exe\n" +
                 " .class public _UNICA{\n" +
                 " .method static public void _principal() {\n" +
                 " .entrypoint ");
-        codigo.append(System.getProperty("line.separator"));
     }
 
     private void acao14(Token token) {
         Tipo t1 = stack.pop();
         if(t1.equals(Tipo.INT64)){
-            codigo.append("conv.i8");
-            codigo.append(System.getProperty("line.separator"));
+            codigo.appendln("conv.i8");
         }
-        codigo.append(String.format("call void [mscorlib]System.Console::Write(%s)", t1));
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln(String.format("call void [mscorlib]System.Console::Write(%s)", t1));
     }
 
     private void acao13(Token token) throws SemanticError {
@@ -68,22 +65,18 @@ public class Semantico implements Constants
         }else{
             throw new SemanticError("Erro acao 13", 0);
         }
-        codigo.append("ldc.i4.1");
-        codigo.append(System.getProperty("line.separator"));
-        codigo.append("xor");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.i4.1");
+        codigo.appendln("xor");
     }
 
     private void acao12(Token token) {
         stack.push(Tipo.BOOL);
-        codigo.append("ldc.i4.0");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.i4.0");
     }
 
     private void acao11(Token token) {
         stack.push(Tipo.BOOL);
-        codigo.append("ldc.i4.1");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.i4.1");
     }
 
     private void acao10(Token token) throws SemanticError {
@@ -96,9 +89,9 @@ public class Semantico implements Constants
             throw new SemanticError("Erro acao 9", 0);
         }
         switch(operador) {
-            case MAIOR: codigo.append("cgt"); codigo.append(System.getProperty("line.separator")); break;
-            case MENOR: codigo.append("clt"); codigo.append(System.getProperty("line.separator")); break;
-            case IGUAL: codigo.append("ceq"); codigo.append(System.getProperty("line.separator")); break;
+            case MAIOR: codigo.appendln("cgt"); break;
+            case MENOR: codigo.appendln("clt"); break;
+            case IGUAL: codigo.appendln("ceq"); break;
         }
     }
 
@@ -113,16 +106,13 @@ public class Semantico implements Constants
         } else {
             throw new SemanticError("Erro acao 8", 0);
         }
-        codigo.append("ldc.18 -1");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.18 -1");
 
         if (t1.equals(Tipo.INT64)){
-            codigo.append("conv.r8");
-            codigo.append(System.getProperty("line.separator"));
+            codigo.appendln("conv.r8");
         }
 
-        codigo.append("mul");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("mul");
     }
 
     private void acao7(Token token) throws SemanticError {
@@ -136,10 +126,8 @@ public class Semantico implements Constants
 
     private void acao6(Token token) {
         stack.push(Tipo.FLOAT64);
-        codigo.append("ldc.r8 ").append(token.getLexeme());
-        codigo.append(System.getProperty("line.separator"));
-        codigo.append("conv.r8");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.r8 ").append(token.getLexeme());
+        codigo.appendln("conv.r8");
     }
 
     private void acao4(Token token) throws SemanticError {
@@ -152,34 +140,28 @@ public class Semantico implements Constants
         }else {
             throw new SemanticError("Erro acao 4", 0);
         }
-        codigo.append("div");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("div");
     }
 
     private void acao3(Token token) throws SemanticError {
         validaTipos();
-        codigo.append("mul");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("mul");
     }
 
     private void acao1(Token token) throws SemanticError {
         validaTipos();
-        codigo.append("add");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("add");
     }
 
     private void acao2(Token token) throws SemanticError {
         validaTipos();
-        codigo.append("sub");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("sub");
     }
 
     private void acao5(Token token) {
         stack.push(Tipo.INT64);
-        codigo.append("ldc.i8 ").append(token.getLexeme());
-        codigo.append(System.getProperty("line.separator"));
-        codigo.append("conv.r8");
-        codigo.append(System.getProperty("line.separator"));
+        codigo.appendln("ldc.i8 ").append(token.getLexeme());
+        codigo.appendln("conv.r8");
     }
 
     private void validaTipos() throws SemanticError {
