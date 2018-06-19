@@ -7,8 +7,4 @@ public class SemanticError extends AnalysisError
         super(msg, position);
     }
 
-    public SemanticError(String msg)
-    {
-        super(msg);
-    }
 }

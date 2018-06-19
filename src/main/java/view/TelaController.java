@@ -168,7 +168,7 @@ public class TelaController implements Initializable {
 
             try {
             	sintatico.parse(lexico, semantico);
-            	txtMessageArea.setText("Programa compilado com sucesso!");
+            	txtMessageArea.setText(semantico.getCodigo());
             }
             catch (SyntaticError e) {
             	String errorMessage = "Erro na linha %s - encontrado %s %s";
