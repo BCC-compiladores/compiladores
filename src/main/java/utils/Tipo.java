@@ -6,5 +6,6 @@ public enum Tipo {
     float64,
     string,
     bool,
+    doublee,
 
 }

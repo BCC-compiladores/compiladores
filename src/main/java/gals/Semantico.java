@@ -44,9 +44,55 @@ public class Semantico implements Constants
             case 21: acao21(token); break;
             case 22: acao22(token); break;
             case 23: acao23(token); break;
+            case 24: acao24(token); break;
+            case 25: acao25(token); break;
+            case 26: acao26(token); break;
         }
 
         System.out.println("Ação #"+action+", Token: "+token);
+    }
+
+    private void acao26(Token token) throws SemanticError {
+        String identificador = listaIdentificadores.get(0);
+        Tipo tipo = tabelaSimbolos.get(identificador);
+        if(tipo == null ){
+            throw new SemanticError("Erro acao 26 - 1", 0);
+        }
+        Tipo tipoExp = stack.pop();
+        if(! tipoExp.equals(tipo)){
+            throw new SemanticError("Erro acao 26 - 2", 0);
+        }
+
+        codigo.appendln("stloc " + identificador);
+    }
+
+    private void acao25(Token token) throws SemanticError {
+        Tipo tipo = tabelaSimbolos.get(token.getLexeme());
+        if(tipo == null){
+            throw new SemanticError("Erro acao 25", 0);
+        }
+        stack.push(tipo);
+        codigo.appendln("ldloc " + token.getLexeme());
+    }
+
+    private void acao24(Token token) throws SemanticError {
+        for(String id: listaIdentificadores){
+            Tipo value = tabelaSimbolos.get(id);
+            if (value == null) {
+                throw new SemanticError("Erro acao 24", 0);
+            }
+
+            if(value.equals(Tipo.int64)){
+                tipoVar = Tipo.int64;
+            }else if(value.equals(Tipo.float64)){
+                tipoVar = Tipo.doublee;
+            }
+
+            codigo.appendln("call string [mscorlib]System.Console::ReadLine()");
+            codigo.appendln("call " + value + "[mscorlib]System." + tipoVar + "::Parse(string)");
+            codigo.appendln("stloc " + id);
+        }
+        listaIdentificadores.clear();
     }
 
     private void acao23(Token token) throws SemanticError {
@@ -57,8 +103,9 @@ public class Semantico implements Constants
             }
 
             tabelaSimbolos.put(id, tipoVar);
-            codigo.appendln(" (.locals (" + tipoVar + " " + id + " +))");
+            codigo.appendln(" .locals (" + tipoVar + " " + id + ")");
         }
+        listaIdentificadores.clear();
     }
 
     private void acao22(Token token) {
