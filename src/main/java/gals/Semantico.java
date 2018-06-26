@@ -13,23 +13,23 @@ public class Semantico implements Constants
 
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
     TextStringBuilder codigo = new TextStringBuilder();
-    ArrayList<String> listaid = new ArrayList<>();
-    HashMap<String, Tipo> TS = new HashMap<>();
-    Tipo tipovar = null;
+    ArrayList<String> listaId = new ArrayList<>();
+    HashMap<String, Tipo> tabelaSimbolos = new HashMap<>();
+    Tipo tipoVar = null;
     Operador operador;
 
     public void executeAction(int action, Token token)	throws SemanticError {
 
         switch(action) {
-            case 1: acao1(token); break;
-            case 2: acao2(token); break;
-            case 3: acao3(token); break;
-            case 4: acao4(token); break;
-            case 5: acao5(token); break;
-            case 6: acao6(token); break;
-            case 7: acao7(token); break;
-            case 8: acao8(token); break;
-            case 9: acao9(token); break;
+            case 1:  acao01(token); break;
+            case 2:  acao02(token); break;
+            case 3:  acao03(token); break;
+            case 4:  acao04(token); break;
+            case 5:  acao05(token); break;
+            case 6:  acao06(token); break;
+            case 7:  acao07(token); break;
+            case 8:  acao08(token); break;
+            case 9:  acao09(token); break;
             case 10: acao10(token); break;
             case 11: acao11(token); break;
             case 12: acao12(token); break;
@@ -47,19 +47,35 @@ public class Semantico implements Constants
         System.out.println("Ação #"+action+", Token: "+token);
     }
     private void acao20(Token token) {
-        stack.push(Tipo.STR);
-        codigo.appendln(String.format("ldstr \"%s\"", token.getLexeme()));
+        stack.push(Tipo.string);
+        codigo.appendln(String.format("ldstr %s", token.getLexeme()));
     }
-    private void acao19(Token token) {
+    private void acao19(Token token) throws SemanticError {
+        Tipo t1 = stack.pop();
+        Tipo t2 = stack.pop();
 
+        if(t1.equals(Tipo.bool) && t2.equals(Tipo.bool)){
+            codigo.appendln("or");
+            return;
+        }
+
+        throw new SemanticError("Erro acao 18", 0);
     }
 
-    private void acao18(Token token) {
+    private void acao18(Token token) throws SemanticError {
+        Tipo t1 = stack.pop();
+        Tipo t2 = stack.pop();
 
+        if(t1.equals(Tipo.bool) && t2.equals(Tipo.bool)){
+            codigo.appendln("and");
+            return;
+        }
+
+        throw new SemanticError("Erro acao 18", 0);
     }
 
     private void acao17(Token token) {
-        codigo.appendln("ldstr \"\n\"");
+        codigo.appendln("ldstr \"\\n\"");
         codigo.appendln("call void [mscorlib]System.Console::Write(string)");
     }
     private void acao16(Token token) {
@@ -77,7 +93,7 @@ public class Semantico implements Constants
 
     private void acao14(Token token) {
         Tipo t1 = stack.pop();
-        if(t1.equals(Tipo.INT64)){
+        if(t1.equals(Tipo.int64)){
             codigo.appendln("conv.i8");
         }
         codigo.appendln(String.format("call void [mscorlib]System.Console::Write(%s)", t1));
@@ -85,8 +101,8 @@ public class Semantico implements Constants
 
     private void acao13(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
-        if(t1.equals(Tipo.BOOL)){
-            stack.push(Tipo.BOOL);
+        if(t1.equals(Tipo.bool)){
+            stack.push(Tipo.bool);
         }else{
             throw new SemanticError("Erro acao 13", 0);
         }
@@ -95,12 +111,12 @@ public class Semantico implements Constants
     }
 
     private void acao12(Token token) {
-        stack.push(Tipo.BOOL);
+        stack.push(Tipo.bool);
         codigo.appendln("ldc.i4.0");
     }
 
     private void acao11(Token token) {
-        stack.push(Tipo.BOOL);
+        stack.push(Tipo.bool);
         codigo.appendln("ldc.i4.1");
     }
 
@@ -109,7 +125,7 @@ public class Semantico implements Constants
         Tipo t2 = stack.pop();
 
         if(t1.equals(t2)){
-            stack.push(Tipo.BOOL);
+            stack.push(Tipo.bool);
         }else{
             throw new SemanticError("Erro acao 9", 0);
         }
@@ -120,71 +136,71 @@ public class Semantico implements Constants
         }
     }
 
-    private void acao9(Token token) {
+    private void acao09(Token token) {
         operador = Operador.valueOf(token.getLexeme());
     }
 
-    private void acao8(Token token) throws SemanticError {
+    private void acao08(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
-        if(t1.equals(Tipo.FLOAT64) || t1.equals(Tipo.INT64)){
+        if(t1.equals(Tipo.float64) || t1.equals(Tipo.int64)){
             stack.push(t1);
         } else {
             throw new SemanticError("Erro acao 8", 0);
         }
         codigo.appendln("ldc.18 -1");
 
-        if (t1.equals(Tipo.INT64)){
+        if (t1.equals(Tipo.int64)){
             codigo.appendln("conv.r8");
         }
 
         codigo.appendln("mul");
     }
 
-    private void acao7(Token token) throws SemanticError {
+    private void acao07(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
-        if(t1.equals(Tipo.FLOAT64) || t1.equals(Tipo.INT64)){
+        if(t1.equals(Tipo.float64) || t1.equals(Tipo.int64)){
             stack.push(t1);
         } else {
             throw new SemanticError("Erro acao 7", 0);
         }
     }
 
-    private void acao6(Token token) {
-        stack.push(Tipo.FLOAT64);
+    private void acao06(Token token) {
+        stack.push(Tipo.float64);
         codigo.appendln("ldc.r8 ").append(token.getLexeme());
         codigo.appendln("conv.r8");
     }
 
-    private void acao4(Token token) throws SemanticError {
+    private void acao04(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
         Tipo t2 = stack.pop();
-        if (t1.equals(Tipo.FLOAT64) || t2.equals(Tipo.FLOAT64)){
-            stack.push(Tipo.FLOAT64);
-        } else if (t1.equals(Tipo.INT64) && t2.equals(Tipo.INT64)) {
-            stack.push(Tipo.INT64);
+        if (t1.equals(Tipo.float64) || t2.equals(Tipo.float64)){
+            stack.push(Tipo.float64);
+        } else if (t1.equals(Tipo.int64) && t2.equals(Tipo.int64)) {
+            stack.push(Tipo.int64);
         }else {
             throw new SemanticError("Erro acao 4", 0);
         }
         codigo.appendln("div");
     }
 
-    private void acao3(Token token) throws SemanticError {
+    private void acao03(Token token) throws SemanticError {
         validaTipos();
         codigo.appendln("mul");
     }
 
-    private void acao1(Token token) throws SemanticError {
+    private void acao01(Token token) throws SemanticError {
         validaTipos();
         codigo.appendln("add");
     }
 
-    private void acao2(Token token) throws SemanticError {
+    private void acao02(Token token) throws SemanticError {
         validaTipos();
         codigo.appendln("sub");
     }
 
-    private void acao5(Token token) {
-        stack.push(Tipo.INT64);
+    private void acao05(Token token) {
+        stack.push(Tipo.int64);
         codigo.appendln("ldc.i8 ").append(token.getLexeme());
         codigo.appendln("conv.r8");
     }
@@ -192,12 +208,12 @@ public class Semantico implements Constants
     private void validaTipos() throws SemanticError {
         Tipo t1 = stack.pop();
         Tipo t2 = stack.pop();
-        if (t1.equals(Tipo.FLOAT64) || t2.equals(Tipo.FLOAT64)){
-            stack.push(Tipo.FLOAT64);
-        } else if (t1.equals(Tipo.BOOL) || t2.equals(Tipo.STR)){
+        if (t1.equals(Tipo.float64) || t2.equals(Tipo.float64)){
+            stack.push(Tipo.float64);
+        } else if (t1.equals(Tipo.bool) || t2.equals(Tipo.string)){
             throw new SemanticError("Tipos incompativeis", 0);
         } else {
-            stack.push(Tipo.INT64);
+            stack.push(Tipo.int64);
         }
     }
 

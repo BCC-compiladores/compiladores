@@ -2,9 +2,9 @@ package utils;
 
 public enum Tipo {
 
-    INT64,
-    FLOAT64,
-    STR,
-    BOOL,
+    int64,
+    float64,
+    string,
+    bool,
 
 }
