@@ -13,7 +13,7 @@ public class Semantico implements Constants
 
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
     TextStringBuilder codigo = new TextStringBuilder();
-    ArrayList<String> listaId = new ArrayList<>();
+    ArrayList<String> listaIdentificadores = new ArrayList<>();
     HashMap<String, Tipo> tabelaSimbolos = new HashMap<>();
     Tipo tipoVar = null;
     Operador operador;
@@ -41,11 +41,40 @@ public class Semantico implements Constants
             case 18: acao18(token); break;
             case 19: acao19(token); break;
             case 20: acao20(token); break;
-
+            case 21: acao21(token); break;
+            case 22: acao22(token); break;
+            case 23: acao23(token); break;
         }
 
         System.out.println("Ação #"+action+", Token: "+token);
     }
+
+    private void acao23(Token token) throws SemanticError {
+        for (String id: listaIdentificadores) {
+            Tipo value = tabelaSimbolos.get(id);
+            if(value != null) {
+                throw new SemanticError("Erro acao 23", 0);
+            }
+
+            tabelaSimbolos.put(id, tipoVar);
+            codigo.appendln(" (.locals (" + tipoVar + " " + id + " +))");
+        }
+    }
+
+    private void acao22(Token token) {
+        listaIdentificadores.add(token.getLexeme());
+    }
+
+    private void acao21(Token token) {
+        Tipo currentType = Tipo.valueOf(token.getLexeme());
+
+        if(currentType.equals(Tipo.int64)){
+            tipoVar = Tipo.int64;
+        } else if(currentType.equals(Tipo.float64)) {
+            tipoVar = Tipo.float64;
+        }
+    }
+
     private void acao20(Token token) {
         stack.push(Tipo.string);
         codigo.appendln(String.format("ldstr %s", token.getLexeme()));
