@@ -5,12 +5,17 @@ import utils.Operador;
 import utils.Tipo;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Semantico implements Constants
 {
 
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
     TextStringBuilder codigo = new TextStringBuilder();
+    ArrayList<String> listaid = new ArrayList<>();
+    HashMap<String, Tipo> TS = new HashMap<>();
+    Tipo tipovar = null;
     Operador operador;
 
     public void executeAction(int action, Token token)	throws SemanticError {
@@ -32,11 +37,31 @@ public class Semantico implements Constants
             case 14: acao14(token); break;
             case 15: acao15(token); break;
             case 16: acao16(token); break;
+            case 17: acao17(token); break;
+            case 18: acao18(token); break;
+            case 19: acao19(token); break;
+            case 20: acao20(token); break;
+
         }
 
         System.out.println("Ação #"+action+", Token: "+token);
     }
+    private void acao20(Token token) {
+        stack.push(Tipo.STR);
+        codigo.appendln(String.format("ldstr \"%s\"", token.getLexeme()));
+    }
+    private void acao19(Token token) {
 
+    }
+
+    private void acao18(Token token) {
+
+    }
+
+    private void acao17(Token token) {
+        codigo.appendln("ldstr \"\n\"");
+        codigo.appendln("call void [mscorlib]System.Console::Write(string)");
+    }
     private void acao16(Token token) {
         codigo.appendln("ret } } ");
     }
