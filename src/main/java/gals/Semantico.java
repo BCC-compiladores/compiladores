@@ -1,6 +1,7 @@
 package gals;
 
 import org.apache.commons.text.TextStringBuilder;
+import utils.Constante;
 import utils.Operador;
 import utils.Tipo;
 
@@ -14,11 +15,14 @@ public class Semantico implements Constants
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
     TextStringBuilder codigo = new TextStringBuilder();
     ArrayList<String> listaIdentificadores = new ArrayList<>();
+    ArrayList<String> listaRotulos = new ArrayList<>();
     HashMap<String, Tipo> tabelaSimbolos = new HashMap<>();
+    ArrayList<Constante> constants = new ArrayList<>();
     Tipo tipoVar = null;
     Operador operador;
 
     public void executeAction(int action, Token token)	throws SemanticError {
+        System.out.println("Ação #"+action+", Token: "+token);
 
         switch(action) {
             case 1:  acao01(token); break;
@@ -47,11 +51,65 @@ public class Semantico implements Constants
             case 24: acao24(token); break;
             case 25: acao25(token); break;
             case 26: acao26(token); break;
+            case 27: acao27(token); break;
+            case 28: acao28(token); break;
+            case 29: acao29(token); break;
+            case 30: acao30(token); break;
+            case 31: acao31(token); break;
+            case 32: acao32(token); break;
+
         }
 
-        System.out.println("Ação #"+action+", Token: "+token);
     }
+    private void acao32(Token token) throws SemanticError {
+        for (String id: listaIdentificadores) {
+            Tipo t = identificaTipoLexema(token.getLexeme());
+            Constante c = new Constante(t, id, getLastAddress()+1, token.getLexeme());
+            Tipo value = tabelaSimbolos.get("c_"+id);
+            if(value != null) {
+                throw new SemanticError("Erro acao 32", 0);
+            }
 
+            tabelaSimbolos.put("c_"+id, t);
+            //first we gotta define the address for the constant
+            codigo.appendln(" .locals init (["+c.getAddress()+"] " + c.getTipo() + " " + id + ")");
+            //then stack the value of the constant
+            if (c.getTipo().equals(Tipo.bool)) { //if bool string is different
+                String command = getMethodByType(c.getTipo());
+                if(token.getLexeme().trim().equals("true")) {
+                    command = command+"1";
+                }
+                else {
+                    command = command+"0";
+                }
+                codigo.appendln(command);
+
+            }else {
+                codigo.appendln(getMethodByType(c.getTipo())+" "+token.getLexeme());
+            }
+            //save value into local
+            codigo.appendln("stloc."+c.getAddress());
+            //add constant to constant list
+            constants.add(c);
+        }
+        listaIdentificadores.clear();
+    }
+    private void acao31(Token token) {
+
+    }
+    private void acao30(Token token) {
+
+    }
+    private void acao29(Token token) {
+
+    }
+    private void acao28(Token token) {
+
+
+    }
+    private void acao27(Token token) {
+        codigo.appendln(getNewLabelName()+":");
+    }
     private void acao26(Token token) throws SemanticError {
         String identificador = listaIdentificadores.get(0);
         Tipo tipo = tabelaSimbolos.get(identificador);
@@ -67,7 +125,7 @@ public class Semantico implements Constants
     }
 
     private void acao25(Token token) throws SemanticError {
-        Tipo tipo = tabelaSimbolos.get(token.getLexeme());
+        Tipo tipo = tabelaSimbolos.get("v_"+token.getLexeme()) == null ?  tabelaSimbolos.get("c_"+token.getLexeme()) : tabelaSimbolos.get("v_"+token.getLexeme());
         if(tipo == null){
             throw new SemanticError("Erro acao 25", 0);
         }
@@ -97,12 +155,12 @@ public class Semantico implements Constants
 
     private void acao23(Token token) throws SemanticError {
         for (String id: listaIdentificadores) {
-            Tipo value = tabelaSimbolos.get(id);
+            Tipo value = tabelaSimbolos.get("v_"+id);
             if(value != null) {
                 throw new SemanticError("Erro acao 23", 0);
             }
 
-            tabelaSimbolos.put(id, tipoVar);
+            tabelaSimbolos.put("v_"+id, tipoVar);
             codigo.appendln(" .locals (" + tipoVar + " " + id + ")");
         }
         listaIdentificadores.clear();
@@ -209,6 +267,9 @@ public class Semantico implements Constants
             case MAIOR: codigo.appendln("cgt"); break;
             case MENOR: codigo.appendln("clt"); break;
             case IGUAL: codigo.appendln("ceq"); break;
+            case MAIOR_IGUAL: break;
+            case MENOR_IGUAL: break;
+            case DIFERENTE: break;
         }
     }
 
@@ -295,5 +356,70 @@ public class Semantico implements Constants
 
     public String getCodigo() {
         return codigo.toString();
+    }
+
+    private String getNewLabelName() {
+        int labelQty = listaRotulos.size();
+
+        String str = "label"+(labelQty+1);
+
+        listaRotulos.add(str);
+
+        return str;
+    }
+
+    private int getLastAddress() {
+        if (constants.size() == 0) {
+            return -1;
+        }
+        return constants.get(constants.size()-1).getAddress();
+    }
+    public String getMethodByType(Tipo tipo) {
+        switch (tipo) {
+            case int64:
+                return "ldc.i8";
+            case float64:
+                return "ldc.r8";
+            case string:
+                return "ldstr";
+            case bool:
+                return "ldc.i4.";
+            default:
+                return "";
+        }
+    }
+
+    private Tipo identificaTipoLexema(String lexema) {
+        if (lexema.trim().charAt(0) == '"') {
+            return Tipo.string;
+        }
+        else if (lexema.trim().equals("true") || lexema.trim().equals("false")) {
+            return Tipo.bool;
+        }
+        else {
+            try {
+                Integer.parseInt(lexema);
+                return Tipo.int64;
+            }
+            catch(NumberFormatException e) {
+                try {
+                    Double.parseDouble(lexema);
+                    return Tipo.float64;
+                }
+                catch(NumberFormatException err) {
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private Constante findConstById(String id) {
+        for (Constante c : constants) {
+            if (c.getId().equals(id)) {
+                return c;
+            }
+        }
+        return null;
     }
 }

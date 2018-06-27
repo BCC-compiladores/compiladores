@@ -1,7 +1,5 @@
 package gals;
 
-import com.sun.javafx.collections.MappingChange;
-
 import java.util.*;
 
 public class ConvertIdToClass {
