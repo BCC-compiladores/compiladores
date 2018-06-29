@@ -30,4 +30,9 @@ public enum Operador {
     public String toString() {
         return msg;
     }
+    public static Operador getEnum(String value) {
+        for(Operador v : values())
+            if(v.get().equalsIgnoreCase(value)) return v;
+        throw new IllegalArgumentException();
+    }
 }

@@ -104,7 +104,12 @@ public class Semantico implements Constants
 
     }
     private void acao28(Token token) {
-
+        if (token.getLexeme().equals("ifTrue")) {
+            codigo.appendln("brfalse "+getLastLabel());
+        }
+        else {
+            codigo.appendln("br "+getLastLabel());
+        }
 
     }
     private void acao27(Token token) {
@@ -112,7 +117,7 @@ public class Semantico implements Constants
     }
     private void acao26(Token token) throws SemanticError {
         String identificador = listaIdentificadores.get(0);
-        Tipo tipo = tabelaSimbolos.get(identificador);
+        Tipo tipo = tabelaSimbolos.get("v_"+identificador) == null ?  tabelaSimbolos.get("c_"+identificador) : tabelaSimbolos.get("v_"+identificador);
         if(tipo == null ){
             throw new SemanticError("Erro acao 26 - 1", 0);
         }
@@ -143,7 +148,7 @@ public class Semantico implements Constants
             if(value.equals(Tipo.int64)){
                 tipoVar = Tipo.int64;
             }else if(value.equals(Tipo.float64)){
-                tipoVar = Tipo.doublee;
+                tipoVar = Tipo.float64;
             }
 
             codigo.appendln("call string [mscorlib]System.Console::ReadLine()");
@@ -171,7 +176,11 @@ public class Semantico implements Constants
     }
 
     private void acao21(Token token) {
-        Tipo currentType = Tipo.valueOf(token.getLexeme());
+        String lexeme = token.getLexeme();
+        if (lexeme.contains("int") || lexeme.contains("float")) {
+            lexeme = lexeme+"64";
+        }
+        Tipo currentType = Tipo.valueOf(lexeme);
 
         if(currentType.equals(Tipo.int64)){
             tipoVar = Tipo.int64;
@@ -274,7 +283,7 @@ public class Semantico implements Constants
     }
 
     private void acao09(Token token) {
-        operador = Operador.valueOf(token.getLexeme());
+        operador = Operador.getEnum(token.getLexeme());
     }
 
     private void acao08(Token token) throws SemanticError {
@@ -366,6 +375,10 @@ public class Semantico implements Constants
         listaRotulos.add(str);
 
         return str;
+    }
+
+    private String getLastLabel() {
+        return listaRotulos.get(listaRotulos.size()-1);
     }
 
     private int getLastAddress() {
