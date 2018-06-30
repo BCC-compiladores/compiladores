@@ -98,19 +98,27 @@ public class Semantico implements Constants
 
     }
     private void acao30(Token token) {
-
+        String label1 = getNewLabelName();
+        String label2 = getNewLabelName();
+        codigo.appendln("//codigo gerado pela acao 30");
+        codigo.appendln("br "+label2);
+        codigo.appendln(label1+":");
+        codigo.appendln("//fim");
     }
     private void acao29(Token token) {
-
+        codigo.appendln("//codigo gerado pela acao 29");
+        codigo.appendln(getLastLabel()+":");
+        codigo.appendln("//fim");
     }
     private void acao28(Token token) {
+        codigo.appendln("//codigo gerado pela acao 28");
         if (token.getLexeme().equals("ifTrue")) {
             codigo.appendln("brfalse "+getLastLabel());
         }
         else {
             codigo.appendln("br "+getLastLabel());
         }
-
+        codigo.appendln("//fim");
     }
     private void acao27(Token token) {
         codigo.appendln(getNewLabelName()+":");
@@ -140,7 +148,7 @@ public class Semantico implements Constants
 
     private void acao24(Token token) throws SemanticError {
         for(String id: listaIdentificadores){
-            Tipo value = tabelaSimbolos.get(id);
+            Tipo value = tabelaSimbolos.get("v_"+id);
             if (value == null) {
                 throw new SemanticError("Erro acao 24", 0);
             }
@@ -266,11 +274,13 @@ public class Semantico implements Constants
     private void acao10(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
         Tipo t2 = stack.pop();
-
-        if(t1.equals(t2)){
+        // Question here, does the type need to be the same, can't we compare ints to floats?
+        //if(t1.equals(t2)){
+        //    stack.push(Tipo.bool);
+        if ((t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) && (t2.equals(Tipo.float64) || t2.equals(Tipo.int64))) {
             stack.push(Tipo.bool);
         }else{
-            throw new SemanticError("Erro acao 9", 0);
+            throw new SemanticError("Erro acao 10", 0);
         }
         switch(operador) {
             case MAIOR: codigo.appendln("cgt"); break;
@@ -313,7 +323,7 @@ public class Semantico implements Constants
 
     private void acao06(Token token) {
         stack.push(Tipo.float64);
-        codigo.appendln("ldc.r8 ").append(token.getLexeme());
+        codigo.appendln("ldc.r8 "+token.getLexeme());
         codigo.appendln("conv.r8");
     }
 
@@ -347,7 +357,7 @@ public class Semantico implements Constants
 
     private void acao05(Token token) {
         stack.push(Tipo.int64);
-        codigo.appendln("ldc.i8 ").append(token.getLexeme());
+        codigo.appendln("ldc.i8 "+token.getLexeme());
         codigo.appendln("conv.r8");
     }
 
