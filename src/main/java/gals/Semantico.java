@@ -13,6 +13,7 @@ public class Semantico implements Constants
 {
 
     ArrayDeque<Tipo> stack = new ArrayDeque<>();
+    ArrayDeque<Token> pilhaLacos = new ArrayDeque<>();
     TextStringBuilder codigo = new TextStringBuilder();
     ArrayList<String> listaIdentificadores = new ArrayList<>();
     ArrayList<String> listaRotulos = new ArrayList<>();
@@ -95,11 +96,22 @@ public class Semantico implements Constants
         listaIdentificadores.clear();
     }
     private void acao31(Token token) {
-
+        codigo.appendln("//codigo gerado pela acao 31");
+        //get last loop
+        Token lastLoop = pilhaLacos.pop();
+        if (lastLoop.getLexeme().equals("whileTrue")) {
+            codigo.appendln("br "+getLastLabel());
+            codigo.appendln(getNewLabelName(true)+":");
+        }
+        else {
+            codigo.appendln("brfalse "+getLastLabel());
+            codigo.appendln(getNewLabelName(true)+":");
+        }
+        codigo.appendln("//fim");
     }
     private void acao30(Token token) {
-        String label1 = getNewLabelName();
-        String label2 = getNewLabelName();
+        String label1 = getLastLabel();
+        String label2 = getNewLabelName(true);
         codigo.appendln("//codigo gerado pela acao 30");
         codigo.appendln("br "+label2);
         codigo.appendln(label1+":");
@@ -112,16 +124,24 @@ public class Semantico implements Constants
     }
     private void acao28(Token token) {
         codigo.appendln("//codigo gerado pela acao 28");
-        if (token.getLexeme().equals("ifTrue")) {
-            codigo.appendln("brfalse "+getLastLabel());
+        if (token.getLexeme().equals("ifTrue") || token.getLexeme().equals("whileTrue")) {
+            if (token.getLexeme().equals("whileTrue")) {
+                pilhaLacos.add(token);
+            }
+            codigo.appendln("brfalse "+getNewLabelName(!token.getLexeme().equals("whileTrue")));
         }
         else {
-            codigo.appendln("br "+getLastLabel());
+            if (token.getLexeme().equals("whileFalse")) {
+                pilhaLacos.add(token);
+            }
+            codigo.appendln("br "+getNewLabelName(!token.getLexeme().equals("whileFalse")));
         }
         codigo.appendln("//fim");
     }
     private void acao27(Token token) {
-        codigo.appendln(getNewLabelName()+":");
+        codigo.appendln("//codigo gerado pela acao 27");
+        codigo.appendln(getNewLabelName(true)+":");
+        codigo.appendln("//fim");
     }
     private void acao26(Token token) throws SemanticError {
         String identificador = listaIdentificadores.get(0);
@@ -144,6 +164,7 @@ public class Semantico implements Constants
         }
         stack.push(tipo);
         codigo.appendln("ldloc " + token.getLexeme());
+        codigo.appendln("conv.r8");
     }
 
     private void acao24(Token token) throws SemanticError {
@@ -323,7 +344,7 @@ public class Semantico implements Constants
 
     private void acao06(Token token) {
         stack.push(Tipo.float64);
-        codigo.appendln("ldc.r8 "+token.getLexeme());
+        codigo.appendln("ldc.r8 "+token.getLexeme().replace(',', '.'));
         codigo.appendln("conv.r8");
     }
 
@@ -377,12 +398,12 @@ public class Semantico implements Constants
         return codigo.toString();
     }
 
-    private String getNewLabelName() {
+    private String getNewLabelName(boolean addToList) {
         int labelQty = listaRotulos.size();
 
         String str = "label"+(labelQty+1);
-
-        listaRotulos.add(str);
+        if (addToList)
+            listaRotulos.add(str);
 
         return str;
     }
