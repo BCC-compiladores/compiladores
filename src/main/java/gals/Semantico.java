@@ -1,13 +1,12 @@
 package gals;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.TextStringBuilder;
 import utils.Constante;
 import utils.Operador;
 import utils.Tipo;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class Semantico implements Constants
 {
@@ -174,14 +173,12 @@ public class Semantico implements Constants
                 throw new SemanticError("Erro acao 24", 0);
             }
 
-            if(value.equals(Tipo.int64)){
-                tipoVar = Tipo.int64;
-            }else if(value.equals(Tipo.float64)){
-                tipoVar = Tipo.float64;
+             if(value.equals(Tipo.float64)){
+                tipoVar = Tipo.doublee;
             }
 
             codigo.appendln("call string [mscorlib]System.Console::ReadLine()");
-            codigo.appendln("call " + value + "[mscorlib]System." + tipoVar + "::Parse(string)");
+            codigo.appendln("call " + value + "[mscorlib]System." + StringUtils.capitalize(tipoVar.toString()) + "::Parse(string)");
             codigo.appendln("stloc " + id);
         }
         listaIdentificadores.clear();
@@ -297,7 +294,8 @@ public class Semantico implements Constants
         Tipo t2 = stack.pop();
         // Question here, does the type need to be the same, can't we compare ints to floats?
         //if(t1.equals(t2)){
-        //    stack.push(Tipo.bool);
+        //    stack.push(Tip0o.bool);
+        //adicionar string, bool
         if ((t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) && (t2.equals(Tipo.float64) || t2.equals(Tipo.int64))) {
             stack.push(Tipo.bool);
         }else{
@@ -307,8 +305,18 @@ public class Semantico implements Constants
             case MAIOR: codigo.appendln("cgt"); break;
             case MENOR: codigo.appendln("clt"); break;
             case IGUAL: codigo.appendln("ceq"); break;
-            case MAIOR_IGUAL: break;
-            case MENOR_IGUAL: break;
+            case MAIOR_IGUAL: {
+                codigo.appendln("clt");
+                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ceq");
+                break;
+            }
+            case MENOR_IGUAL: {
+                codigo.appendln("cgt");
+                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ceq");
+                break;
+            }
             case DIFERENTE: break;
         }
     }
@@ -348,6 +356,12 @@ public class Semantico implements Constants
         codigo.appendln("conv.r8");
     }
 
+    private void acao05(Token token) {
+        stack.push(Tipo.int64);
+        codigo.appendln("ldc.i8 "+token.getLexeme());
+        codigo.appendln("conv.r8");
+    }
+
     private void acao04(Token token) throws SemanticError {
         Tipo t1 = stack.pop();
         Tipo t2 = stack.pop();
@@ -366,20 +380,15 @@ public class Semantico implements Constants
         codigo.appendln("mul");
     }
 
-    private void acao01(Token token) throws SemanticError {
-        validaTipos();
-        codigo.appendln("add");
-    }
 
     private void acao02(Token token) throws SemanticError {
         validaTipos();
         codigo.appendln("sub");
     }
 
-    private void acao05(Token token) {
-        stack.push(Tipo.int64);
-        codigo.appendln("ldc.i8 "+token.getLexeme());
-        codigo.appendln("conv.r8");
+    private void acao01(Token token) throws SemanticError {
+        validaTipos();
+        codigo.appendln("add");
     }
 
     private void validaTipos() throws SemanticError {

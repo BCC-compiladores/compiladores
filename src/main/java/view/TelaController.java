@@ -3,6 +3,9 @@ package view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -32,6 +35,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 
 import utils.FileUtils;
 import utils.Messages;
+import utils.Operador;
 
 @SuppressWarnings("restriction")
 public class TelaController implements Initializable {
@@ -168,7 +172,14 @@ public class TelaController implements Initializable {
 
             try {
             	sintatico.parse(lexico, semantico);
-            	txtMessageArea.setText(semantico.getCodigo());
+            	txtMessageArea.setText("Programa compilado com sucesso");
+            	if(currentFile == null) {
+					System.out.println("precisa salvar o arquivo");
+				}else {
+					Path generatedCodePath = Paths.get(currentFile.getPath().replace(".txt", ".il"));
+					Files.write(generatedCodePath, semantico.getCodigo().getBytes());
+				}
+
             }
             catch (SyntaticError e) {
             	String errorMessage = "Erro na linha %s - encontrado %s %s";
@@ -188,8 +199,10 @@ public class TelaController implements Initializable {
             }
             catch (SemanticError err ) {
                 System.err.println(err);
-            }
-        }
+            } catch (IOException e) {
+				System.out.println(e);
+			}
+		}
 	}
 
 	private String getLineByPosition(int position) {
