@@ -296,7 +296,11 @@ public class Semantico implements Constants
         //if(t1.equals(t2)){
         //    stack.push(Tip0o.bool);
         //adicionar string, bool
-        if ((t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) && (t2.equals(Tipo.float64) || t2.equals(Tipo.int64))) {
+        if (
+            (t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) &&
+            (t2.equals(Tipo.float64) || t2.equals(Tipo.int64)) ||
+            (t1.equals(Tipo.string) && t2.equals(Tipo.string))
+            ) {
             stack.push(Tipo.bool);
         }else{
             throw new SemanticError("Erro acao 10", 0);
@@ -307,17 +311,22 @@ public class Semantico implements Constants
             case IGUAL: codigo.appendln("ceq"); break;
             case MAIOR_IGUAL: {
                 codigo.appendln("clt");
-                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ldc.i4.0");
                 codigo.appendln("ceq");
                 break;
             }
             case MENOR_IGUAL: {
                 codigo.appendln("cgt");
-                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ldc.i4.0");
                 codigo.appendln("ceq");
                 break;
             }
-            case DIFERENTE: break;
+            case DIFERENTE:{
+                codigo.appendln("ceq");
+                codigo.appendln("ldc.i4.0");
+                codigo.appendln("ceq");
+                break;
+            }
         }
     }
 
