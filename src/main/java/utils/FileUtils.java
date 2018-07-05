@@ -1,6 +1,13 @@
 package utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -28,7 +35,7 @@ public class FileUtils {
     public static void writeToFile(String string, File file) throws IOException {
         try (
                 BufferedReader reader = new BufferedReader(new StringReader(string));
-                PrintWriter writer = new PrintWriter(new FileWriter(file))
+                PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
         ) {
             reader.lines().forEach(writer::println);
         }
