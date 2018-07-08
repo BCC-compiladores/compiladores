@@ -202,7 +202,7 @@ public class TelaController implements Initializable {
                 txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
             }
             catch (SemanticError err ) {
-                System.err.println(err);
+                txtMessageArea.appendText(err.getMessage());
             } catch (IOException e) {
 				System.out.println(e);
 			}
