@@ -171,14 +171,18 @@ public class TelaController implements Initializable {
             Semantico semantico = new Semantico();
 
             try {
+				if(currentFile == null) {
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setTitle("Compilador");
+					alert.setContentText("É necessário salvar o arquivo antes de compilar!");
+					alert.showAndWait();
+					return;
+				}
+
             	sintatico.parse(lexico, semantico);
             	txtMessageArea.setText("Programa compilado com sucesso");
-            	if(currentFile == null) {
-					System.out.println("precisa salvar o arquivo");
-				}else {
-					Path generatedCodePath = Paths.get(currentFile.getPath().replace(".txt", ".il"));
-					Files.write(generatedCodePath, semantico.getCodigo().getBytes());
-				}
+				Path generatedCodePath = Paths.get(currentFile.getPath().replace(".txt", ".il"));
+				Files.write(generatedCodePath, semantico.getCodigo().getBytes());
 
             }
             catch (SyntaticError e) {
