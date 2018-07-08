@@ -156,7 +156,9 @@ public class Semantico implements Constants
         if(! tipoExp.equals(tipo)){
             throw new SemanticError(Messages.TIPO_INCOMPATIVEL_ATRIBUICAO, token.getPosition());
         }
-
+        if (tipo.equals(Tipo.int64)){
+            codigo.appendln("conv.i8");
+        }
         codigo.appendln("stloc " + identificador);
     }
 
