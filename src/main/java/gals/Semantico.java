@@ -1,12 +1,16 @@
 package gals;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.TextStringBuilder;
+
 import utils.Constante;
+import utils.Messages;
 import utils.Operador;
 import utils.Tipo;
-
-import java.util.*;
 
 public class Semantico implements Constants
 {
@@ -146,11 +150,11 @@ public class Semantico implements Constants
         String identificador = listaIdentificadores.get(0);
         Tipo tipo = tabelaSimbolos.get("v_"+identificador) == null ?  tabelaSimbolos.get("c_"+identificador) : tabelaSimbolos.get("v_"+identificador);
         if(tipo == null ){
-            throw new SemanticError("Erro acao 26 - 1", 0);
+            throw new SemanticError(Messages.IDENTIFICADOR_NAO_DECLARADO, token.getPosition());
         }
         Tipo tipoExp = stack.pop();
         if(! tipoExp.equals(tipo)){
-            throw new SemanticError("Erro acao 26 - 2", 0);
+            throw new SemanticError(Messages.TIPO_INCOMPATIVEL_ATRIBUICAO, token.getPosition());
         }
 
         codigo.appendln("stloc " + identificador);
@@ -159,7 +163,7 @@ public class Semantico implements Constants
     private void acao25(Token token) throws SemanticError {
         Tipo tipo = tabelaSimbolos.get("v_"+token.getLexeme()) == null ?  tabelaSimbolos.get("c_"+token.getLexeme()) : tabelaSimbolos.get("v_"+token.getLexeme());
         if(tipo == null){
-            throw new SemanticError("Erro acao 25", 0);
+            throw new SemanticError(Messages.IDENTIFICADOR_NAO_DECLARADO, token.getPosition());
         }
         stack.push(tipo);
         codigo.appendln("ldloc " + token.getLexeme());
@@ -170,7 +174,7 @@ public class Semantico implements Constants
         for(String id: listaIdentificadores){
             Tipo value = tabelaSimbolos.get("v_"+id);
             if (value == null) {
-                throw new SemanticError("Erro acao 24", 0);
+                throw new SemanticError(Messages.IDENTIFICADOR_NAO_DECLARADO, token.getPosition());
             }
 
              if(value.equals(Tipo.float64)){
@@ -188,7 +192,7 @@ public class Semantico implements Constants
         for (String id: listaIdentificadores) {
             Tipo value = tabelaSimbolos.get("v_"+id);
             if(value != null) {
-                throw new SemanticError("Erro acao 23", 0);
+                throw new SemanticError(Messages.IDENTIFICADOR_JA_DECLARADO, token.getPosition());
             }
 
             tabelaSimbolos.put("v_"+id, tipoVar);
@@ -228,7 +232,7 @@ public class Semantico implements Constants
             return;
         }
 
-        throw new SemanticError("Erro acao 18", 0);
+        throw new SemanticError(Messages.OPERACAO_LOGICA_BINARIA, token.getPosition());
     }
 
     private void acao18(Token token) throws SemanticError {
@@ -240,7 +244,7 @@ public class Semantico implements Constants
             return;
         }
 
-        throw new SemanticError("Erro acao 18", 0);
+        throw new SemanticError(Messages.OPERACAO_LOGICA_BINARIA, token.getPosition());
     }
 
     private void acao17(Token token) {
@@ -273,7 +277,7 @@ public class Semantico implements Constants
         if(t1.equals(Tipo.bool)){
             stack.push(Tipo.bool);
         }else{
-            throw new SemanticError("Erro acao 13", 0);
+            throw new SemanticError(Messages.OPERACAO_LOGICA_UNARIA, token.getPosition());
         }
         codigo.appendln("ldc.i4.1");
         codigo.appendln("xor");
@@ -296,10 +300,14 @@ public class Semantico implements Constants
         //if(t1.equals(t2)){
         //    stack.push(Tip0o.bool);
         //adicionar string, bool
-        if ((t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) && (t2.equals(Tipo.float64) || t2.equals(Tipo.int64))) {
+        if (
+            (t1.equals(Tipo.int64) || t1.equals(Tipo.float64)) &&
+            (t2.equals(Tipo.float64) || t2.equals(Tipo.int64)) ||
+            (t1.equals(Tipo.string) && t2.equals(Tipo.string))
+            ) {
             stack.push(Tipo.bool);
         }else{
-            throw new SemanticError("Erro acao 10", 0);
+            throw new SemanticError(Messages.OPERACAO_RELACIONAL, token.getPosition());
         }
         switch(operador) {
             case MAIOR: codigo.appendln("cgt"); break;
@@ -307,17 +315,22 @@ public class Semantico implements Constants
             case IGUAL: codigo.appendln("ceq"); break;
             case MAIOR_IGUAL: {
                 codigo.appendln("clt");
-                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ldc.i4.0");
                 codigo.appendln("ceq");
                 break;
             }
             case MENOR_IGUAL: {
                 codigo.appendln("cgt");
-                codigo.appendln("ldc.r8 0");
+                codigo.appendln("ldc.i4.0");
                 codigo.appendln("ceq");
                 break;
             }
-            case DIFERENTE: break;
+            case DIFERENTE:{
+                codigo.appendln("ceq");
+                codigo.appendln("ldc.i4.0");
+                codigo.appendln("ceq");
+                break;
+            }
         }
     }
 
@@ -330,7 +343,7 @@ public class Semantico implements Constants
         if(t1.equals(Tipo.float64) || t1.equals(Tipo.int64)){
             stack.push(t1);
         } else {
-            throw new SemanticError("Erro acao 8", 0);
+            throw new SemanticError(Messages.OPERACAO_ARITMETICA_UNARIA, token.getPosition());
         }
         codigo.appendln("ldc.18 -1");
 
@@ -346,7 +359,7 @@ public class Semantico implements Constants
         if(t1.equals(Tipo.float64) || t1.equals(Tipo.int64)){
             stack.push(t1);
         } else {
-            throw new SemanticError("Erro acao 7", 0);
+            throw new SemanticError(Messages.OPERACAO_ARITMETICA_UNARIA, token.getPosition());
         }
     }
 
@@ -370,34 +383,34 @@ public class Semantico implements Constants
         } else if (t1.equals(Tipo.int64) && t2.equals(Tipo.int64)) {
             stack.push(Tipo.int64);
         }else {
-            throw new SemanticError("Erro acao 4", 0);
+            throw new SemanticError(Messages.OPERACAO_ARITMETICA_BINARIA, token.getPosition());
         }
         codigo.appendln("div");
     }
 
     private void acao03(Token token) throws SemanticError {
-        validaTipos();
+        validaTipos(token);
         codigo.appendln("mul");
     }
 
 
     private void acao02(Token token) throws SemanticError {
-        validaTipos();
+        validaTipos(token);
         codigo.appendln("sub");
     }
 
     private void acao01(Token token) throws SemanticError {
-        validaTipos();
+        validaTipos(token);
         codigo.appendln("add");
     }
 
-    private void validaTipos() throws SemanticError {
+    private void validaTipos(Token t) throws SemanticError {
         Tipo t1 = stack.pop();
         Tipo t2 = stack.pop();
         if (t1.equals(Tipo.float64) || t2.equals(Tipo.float64)){
             stack.push(Tipo.float64);
         } else if (t1.equals(Tipo.bool) || t2.equals(Tipo.string)){
-            throw new SemanticError("Tipos incompativeis", 0);
+            throw new SemanticError(Messages.OPERACAO_ARITMETICA_UNARIA, t.getPosition());
         } else {
             stack.push(Tipo.int64);
         }
