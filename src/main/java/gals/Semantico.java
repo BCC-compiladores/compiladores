@@ -167,7 +167,9 @@ public class Semantico implements Constants
         }
         stack.push(tipo);
         codigo.appendln("ldloc " + token.getLexeme());
-        codigo.appendln("conv.r8");
+        if (tipo.equals(Tipo.int64)) {
+            codigo.appendln("conv.r8");
+        }
     }
 
     private void acao24(Token token) throws SemanticError {
@@ -213,9 +215,13 @@ public class Semantico implements Constants
         Tipo currentType = Tipo.valueOf(lexeme);
 
         if(currentType.equals(Tipo.int64)){
-            tipoVar = Tipo.int64;
+            tipoVar = Tipo.getEnum("int64");
         } else if(currentType.equals(Tipo.float64)) {
-            tipoVar = Tipo.float64;
+            tipoVar = Tipo.getEnum("float64");
+        }else if (currentType.equals(Tipo.string)) {
+            tipoVar = Tipo.getEnum("string");
+        }else if (currentType.equals(Tipo.bool)) {
+            tipoVar = Tipo.getEnum("bool");
         }
     }
 
