@@ -26,6 +26,8 @@ public class MainApplication extends Application{
 		
 		Scene scene = new Scene(mainParent);
 		
+		scene.getStylesheets().add(getClass().getClassLoader().getResource("styles.css").toExternalForm());
+		
 		TelaController telaController = fxmlLoader.getController();
 		telaController.setScene(scene);
 		telaController.bindKeys();

@@ -9,7 +9,7 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.TelaController">
     <VirtualizedScrollPane fx:id="txtAreaPane" layoutX="130.0" layoutY="5.0" minHeight="380.0" minWidth="750.0">
         <content>
-            <CodeArea fx:id="txtArea"/>
+            <CodeArea fx:id="codeArea"/>
         </content>
     </VirtualizedScrollPane>
     <Pane layoutY="-10.0" prefHeight="563.0" prefWidth="181.0">

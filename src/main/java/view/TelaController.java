@@ -6,9 +6,21 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.reactfx.Subscription;
 
 import gals.ConvertIdToClass;
 import gals.LexicalError;
@@ -17,25 +29,25 @@ import gals.SemanticError;
 import gals.Semantico;
 import gals.Sintatico;
 import gals.SyntaticError;
-import gals.Token;
-import javafx.scene.control.*;
-
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.Scene;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-
 import utils.FileUtils;
 import utils.Messages;
-import utils.Operador;
 
 @SuppressWarnings("restriction")
 public class TelaController implements Initializable {
@@ -48,7 +60,7 @@ public class TelaController implements Initializable {
 	@FXML private Button btnCut;
 	@FXML private Button btnCompile;
 	@FXML private Button btnAbout;
-	@FXML private CodeArea txtArea;
+	@FXML private CodeArea codeArea;
 	@FXML private TextArea txtMessageArea;
 	@FXML private Label lblBarraStatus;
 	@FXML private VirtualizedScrollPane<CodeArea> txtAreaPane;
@@ -58,6 +70,28 @@ public class TelaController implements Initializable {
 	private Stage stage;
 	private File currentFile;
 
+	private static final String[] KEYWORDS = {
+			"bool", "consts", "def", "end", "execute", "false", "float", "get", "ifFalse", "ifTrue", "input", "int", "print", "println", "set", "str", "true", "types", "var", "whileFalse", "whileTrue"	
+	};
+	
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+    private static final String PAREN_PATTERN = "\\(|\\)";
+    private static final String BRACE_PATTERN = "\\{|\\}";
+    private static final String BRACKET_PATTERN = "\\[|\\]";
+    private static final String SEMICOLON_PATTERN = "\\;";
+    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
+    
+    private static final Pattern PATTERN = Pattern.compile(
+            "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+            + "|(?<PAREN>" + PAREN_PATTERN + ")"
+            + "|(?<BRACE>" + BRACE_PATTERN + ")"
+            + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
+            + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
+            + "|(?<STRING>" + STRING_PATTERN + ")"
+            + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+    );
+	
 	public void setScene(Scene scene) {
 		this.scene = scene;
 	}
@@ -71,9 +105,27 @@ public class TelaController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		styleButtons();
 		txtMessageArea.setEditable(false);
-		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));
+		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 		txtAreaPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		txtAreaPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+		
+		
+	  Subscription cleanupWhenNoLongerNeedIt = codeArea
+
+	                // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
+	                // multi plain changes = save computation by not rerunning the code multiple times
+	                //   when making multiple changes (e.g. renaming a method at multiple parts in file)
+	                .multiPlainChanges()
+
+	                // do not emit an event until 500 ms have passed since the last emission of previous stream
+	                .successionEnds(Duration.ofMillis(500))
+
+	                // run the following code block when previous stream emits an event
+	                .subscribe(ignore -> codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText())));
+
+	        // when no longer need syntax highlighting and wish to clean up memory leaks
+	        // run: `cleanupWhenNoLongerNeedIt.unsubscribe();`
+		
 
 	}
 	private void bindResize() {
@@ -95,7 +147,7 @@ public class TelaController implements Initializable {
 	@FXML
 	public void btnNewOnClick() {
 	    currentFile = null;
-		txtArea.clear();
+		codeArea.clear();
 		txtMessageArea.clear();
 		lblBarraStatus.setText("");		
 	}
@@ -111,8 +163,8 @@ public class TelaController implements Initializable {
 
 		this.currentFile = selectedFile;
 		txtMessageArea.clear();
-		txtArea.clear();
-		txtArea.appendText(FileUtils.readFile(currentFile));
+		codeArea.clear();
+		codeArea.appendText(FileUtils.readFile(currentFile));
         updateFileLabel();
     }
 
@@ -137,22 +189,22 @@ public class TelaController implements Initializable {
             currentFile = selectedFile;
         }
 
-        FileUtils.writeToFile(txtArea.getText(), currentFile);
+        FileUtils.writeToFile(codeArea.getText(), currentFile);
         txtMessageArea.clear();
         updateFileLabel();
     }
 	@FXML
 	public void btnCopyOnClick() {
-		txtArea.copy();
+		codeArea.copy();
 	}
 	@FXML
 	public void btnPasteOnClick() {
-		txtArea.paste();
+		codeArea.paste();
 	}
 
 	@FXML
 	public void btnCutOnClick() {
-        txtArea.cut();
+        codeArea.cut();
 	}
 
     @FXML
@@ -160,12 +212,12 @@ public class TelaController implements Initializable {
 
         txtMessageArea.clear();
 
-        if(txtArea.getText().trim().isEmpty()){
+        if(codeArea.getText().trim().isEmpty()){
             txtMessageArea.appendText(Messages.EMPTY_PROGRAM.get());
         } else {
 
             Lexico lexico = new Lexico();
-            lexico.setInput(txtArea.getText());
+            lexico.setInput(codeArea.getText());
 
             Sintatico sintatico = new Sintatico();
             Semantico semantico = new Semantico();
@@ -210,7 +262,7 @@ public class TelaController implements Initializable {
 	}
 
 	private String getLineByPosition(int position) {
-		String content = txtArea.getText();
+		String content = codeArea.getText();
 		int newLineQty = 0;
 		for (int i = 0; i < content.length(); i++) {
 			if (i == position) {
@@ -294,5 +346,29 @@ public class TelaController implements Initializable {
     }
     public static String padRight(String s, int n) {
         return String.format("%1$-" + n + "s", s);
+    }
+    
+    
+    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder
+                = new StyleSpansBuilder<>();
+        while(matcher.find()) {
+            String styleClass =
+                    matcher.group("KEYWORD") != null ? "keyword" :
+                    matcher.group("PAREN") != null ? "paren" :
+                    matcher.group("BRACE") != null ? "brace" :
+                    matcher.group("BRACKET") != null ? "bracket" :
+                    matcher.group("SEMICOLON") != null ? "semicolon" :
+                    matcher.group("STRING") != null ? "string" :
+                    matcher.group("COMMENT") != null ? "comment" :
+                    null; /* never happens */ assert styleClass != null;
+            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
     }
 }
