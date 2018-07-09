@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.TextStringBuilder;
 
+import org.apache.commons.text.matcher.StringMatcher;
 import utils.Constante;
 import utils.Messages;
 import utils.Operador;
@@ -102,15 +103,20 @@ public class Semantico implements Constants
         codigo.appendln("//codigo gerado pela acao 31");
         //get last loop
         Token lastLoop = pilhaDesvios.pop();
+        String newLabel = getNewLabelName(true);
         if (lastLoop.getLexeme().equals("whileTrue")) {
-            codigo.appendln("br "+getLastLabel());
-            codigo.appendln(getNewLabelName(true)+":");
+            codigo.appendln("br "+lastLoop.getLabel());
+            codigo.appendln(newLabel+":");
         }
         else {
-            codigo.appendln("brfalse "+getLastLabel());
-            codigo.appendln(getNewLabelName(true)+":");
+            codigo.appendln("brfalse "+lastLoop.getLabel());
+            codigo.appendln(newLabel+":");
         }
         codigo.appendln("//fim");
+        String cod = codigo.toString();
+        cod = cod.replace("#:"+lastLoop.getLabel()+":#", newLabel);
+        codigo.clear();
+        codigo.append(cod);
     }
     private void acao30(Token token) {
         String label1 = getLastLabel();
@@ -128,16 +134,26 @@ public class Semantico implements Constants
     private void acao28(Token token) {
         codigo.appendln("//codigo gerado pela acao 28");
         if (token.getLexeme().equals("ifTrue") || token.getLexeme().equals("whileTrue")) {
+            token.setLabel(this.getLastLabel());
             if (token.getLexeme().equals("whileTrue")) {
                 pilhaDesvios.add(token);
+                codigo.appendln("brfalse #:"+token.getLabel()+":#");
             }
-            codigo.appendln("brfalse "+getNewLabelName(!token.getLexeme().equals("whileTrue")));
+            else {
+                codigo.appendln("brfalse "+getNewLabelName(true));
+            }
         }
         else {
+            token.setLabel(this.getLastLabel());
             if (token.getLexeme().equals("whileFalse")) {
                 pilhaDesvios.add(token);
+                codigo.appendln("br #:"+token.getLabel()+":#");
             }
-            codigo.appendln("br "+getNewLabelName(!token.getLexeme().equals("whileFalse")));
+            else {
+                codigo.appendln("br "+getNewLabelName(true));
+            }
+
+
         }
         codigo.appendln("//fim");
     }

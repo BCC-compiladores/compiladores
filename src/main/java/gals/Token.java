@@ -6,6 +6,10 @@ public class Token
     private String lexeme;
     private int position;
 
+
+
+    private String label;
+
     public Token(int id, String lexeme, int position)
     {
         this.id = id;
@@ -32,4 +36,12 @@ public class Token
     {
         return id+" ( "+lexeme+" ) @ "+position;
     };
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }
