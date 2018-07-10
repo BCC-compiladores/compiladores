@@ -126,11 +126,12 @@ public class Semantico implements Constants
         codigo.append(cod);
     }
     private void acao30(Token token) {
-        String label1 = getLastLabel();
+        String label1 = getNewLabelName(true);
         String label2 = getNewLabelName(true);
         hasIfFalse = true;
         codigo.appendln("//codigo gerado pela acao 30");
         codigo.appendln("br "+label2);
+        codigo.appendln(label1+":");
         codigo.appendln("//fim");
     }
     private void acao29(Token token) {
