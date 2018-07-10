@@ -26,6 +26,8 @@ public class Semantico implements Constants
     Tipo tipoVar = null;
     Operador operador;
 
+    boolean hasIfFalse = false;
+
     public void executeAction(int action, Token token)	throws SemanticError {
         System.out.println("Ação #"+action+", Token: "+token);
 
@@ -102,55 +104,75 @@ public class Semantico implements Constants
     private void acao31(Token token) {
         codigo.appendln("//codigo gerado pela acao 31");
         //get last loop
-        Token lastLoop = pilhaDesvios.pop();
+        Token lastLoop = pilhaDesvios.removeLast();
         String newLabel = getNewLabelName(true);
         if (lastLoop.getLexeme().equals("whileTrue")) {
             codigo.appendln("br "+lastLoop.getLabel());
             codigo.appendln(newLabel+":");
         }
         else {
-            codigo.appendln("brfalse "+lastLoop.getLabel());
+            codigo.appendln("br "+lastLoop.getLabel());
             codigo.appendln(newLabel+":");
         }
         codigo.appendln("//fim");
+        System.out.print("acao31 - ");
+        System.out.println(lastLoop.getLabel());
+
         String cod = codigo.toString();
+
         cod = cod.replace("#:"+lastLoop.getLabel()+":#", newLabel);
+
         codigo.clear();
         codigo.append(cod);
     }
     private void acao30(Token token) {
         String label1 = getLastLabel();
         String label2 = getNewLabelName(true);
+        hasIfFalse = true;
         codigo.appendln("//codigo gerado pela acao 30");
         codigo.appendln("br "+label2);
-        codigo.appendln(label1+":");
         codigo.appendln("//fim");
     }
     private void acao29(Token token) {
+        Token t = pilhaDesvios.removeLast();
+        System.out.println(t);
+        if (token.getLexeme().equals("end") && !hasIfFalse) {
+            codigo.appendln("//codigo gerado pela acao 29");
+            codigo.appendln(getNewLabelName(true)+":");
+            codigo.appendln("//fim");
+            return;
+        }
+        System.out.println(t);
+        System.out.println(t.getLabel());
         codigo.appendln("//codigo gerado pela acao 29");
+
+//        codigo.appendln(t.getLabel()+":");
         codigo.appendln(getLastLabel()+":");
         codigo.appendln("//fim");
+        hasIfFalse = false;
+
     }
     private void acao28(Token token) {
         codigo.appendln("//codigo gerado pela acao 28");
         if (token.getLexeme().equals("ifTrue") || token.getLexeme().equals("whileTrue")) {
             token.setLabel(this.getLastLabel());
+            pilhaDesvios.add(token);
             if (token.getLexeme().equals("whileTrue")) {
-                pilhaDesvios.add(token);
                 codigo.appendln("brfalse #:"+token.getLabel()+":#");
             }
             else {
-                codigo.appendln("brfalse "+getNewLabelName(true));
+                codigo.appendln("brfalse "+getNewLabelName(false));
             }
         }
         else {
             token.setLabel(this.getLastLabel());
+            pilhaDesvios.add(token);
             if (token.getLexeme().equals("whileFalse")) {
-                pilhaDesvios.add(token);
-                codigo.appendln("br #:"+token.getLabel()+":#");
+
+                codigo.appendln("brtrue #:"+token.getLabel()+":#");
             }
             else {
-                codigo.appendln("br "+getNewLabelName(true));
+                codigo.appendln("brtrue "+getNewLabelName(false));
             }
 
 
@@ -163,7 +185,7 @@ public class Semantico implements Constants
         codigo.appendln("//fim");
     }
     private void acao26(Token token) throws SemanticError {
-        String identificador = listaIdentificadores.get(0);
+        String identificador = listaIdentificadores.remove(0);
         Tipo tipo = tabelaSimbolos.get("v_"+identificador) == null ?  tabelaSimbolos.get("c_"+identificador) : tabelaSimbolos.get("v_"+identificador);
         if(tipo == null ){
             throw new SemanticError(Messages.IDENTIFICADOR_NAO_DECLARADO, token.getPosition());
