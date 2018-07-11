@@ -7,7 +7,6 @@ import java.util.HashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.TextStringBuilder;
 
-import org.apache.commons.text.matcher.StringMatcher;
 import utils.Constante;
 import utils.Messages;
 import utils.Operador;

@@ -35,7 +35,7 @@ public class Token
     public String toString()
     {
         return id+" ( "+lexeme+" ) @ "+position;
-    };
+    }
 
     public String getLabel() {
         return label;

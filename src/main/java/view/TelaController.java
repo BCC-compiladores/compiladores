@@ -6,9 +6,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.time.Duration;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import gals.ConvertIdToClass;
 import gals.LexicalError;
@@ -33,6 +34,9 @@ import javafx.scene.input.*;
 import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.reactfx.Subscription;
 import utils.FileUtils;
 import utils.Messages;
 import utils.Operador;
@@ -58,6 +62,28 @@ public class TelaController implements Initializable {
 	private Stage stage;
 	private File currentFile;
 
+	private static final String[] KEYWORDS = {
+			"bool", "consts", "def", "end", "execute", "false", "float", "get", "ifFalse", "ifTrue", "input", "int", "print", "println", "set", "str", "true", "types", "var", "whileFalse", "whileTrue"
+	};
+
+	private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+	private static final String PAREN_PATTERN = "\\(|\\)";
+	private static final String BRACE_PATTERN = "\\{|\\}";
+	private static final String BRACKET_PATTERN = "\\[|\\]";
+	private static final String SEMICOLON_PATTERN = "\\;";
+	private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+	private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
+
+	private static final Pattern PATTERN = Pattern.compile(
+			"(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+					+ "|(?<PAREN>" + PAREN_PATTERN + ")"
+					+ "|(?<BRACE>" + BRACE_PATTERN + ")"
+					+ "|(?<BRACKET>" + BRACKET_PATTERN + ")"
+					+ "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
+					+ "|(?<STRING>" + STRING_PATTERN + ")"
+					+ "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+	);
+
 	public void setScene(Scene scene) {
 		this.scene = scene;
 	}
@@ -74,6 +100,11 @@ public class TelaController implements Initializable {
 		txtArea.setParagraphGraphicFactory(LineNumberFactory.get(txtArea));
 		txtAreaPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		txtAreaPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+
+		txtArea
+			.multiPlainChanges()
+			.successionEnds(Duration.ofMillis(500))
+			.subscribe(ignore -> txtArea.setStyleSpans(0, computeHighlighting(txtArea.getText())));
 
 	}
 	private void bindResize() {
@@ -202,7 +233,8 @@ public class TelaController implements Initializable {
                 txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(e.getPosition()), "", e.getMessage()));
             }
             catch (SemanticError err ) {
-                txtMessageArea.appendText(err.getMessage());
+				String errorMessage = "Erro na linha %s, %s";
+                txtMessageArea.appendText(String.format(errorMessage, getLineByPosition(err.getPosition()), err.getMessage()));
             } catch (IOException e) {
 				System.out.println(e);
 			}
@@ -289,10 +321,26 @@ public class TelaController implements Initializable {
 		return new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("imagens/" + imgName + ".png")));
 	}
 
-    public static String padLeft(String s, int n) {
-        return String.format("%1$" + n + "s", s);
-    }
-    public static String padRight(String s, int n) {
-        return String.format("%1$-" + n + "s", s);
-    }
+	private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+		Matcher matcher = PATTERN.matcher(text);
+		int lastKwEnd = 0;
+		StyleSpansBuilder<Collection<String>> spansBuilder
+				= new StyleSpansBuilder<>();
+		while(matcher.find()) {
+			String styleClass =
+					matcher.group("KEYWORD") != null ? "keyword" :
+							matcher.group("PAREN") != null ? "paren" :
+									matcher.group("BRACE") != null ? "brace" :
+											matcher.group("BRACKET") != null ? "bracket" :
+													matcher.group("SEMICOLON") != null ? "semicolon" :
+															matcher.group("STRING") != null ? "string" :
+																	matcher.group("COMMENT") != null ? "comment" :
+																			null; /* never happens */ assert styleClass != null;
+			spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+			spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+			lastKwEnd = matcher.end();
+		}
+		spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+		return spansBuilder.create();
+	}
 }

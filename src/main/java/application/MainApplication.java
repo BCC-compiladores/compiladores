@@ -29,7 +29,9 @@ public class MainApplication extends Application{
 		TelaController telaController = fxmlLoader.getController();
 		telaController.setScene(scene);
 		telaController.bindKeys();
-		
+
+		scene.getStylesheets().add(getClass().getClassLoader().getResource("styles.css").toExternalForm());
+
 		Stage stage = new Stage();
 		stage.setHeight(620);
 		stage.setWidth(900);
