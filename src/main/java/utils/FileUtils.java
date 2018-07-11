@@ -35,7 +35,7 @@ public class FileUtils {
     public static void writeToFile(String string, File file) throws IOException {
         try (
                 BufferedReader reader = new BufferedReader(new StringReader(string));
-                PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+                PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))
         ) {
             reader.lines().forEach(writer::println);
         }
